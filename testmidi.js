@@ -49,6 +49,12 @@
 
     function m_midiout(ch, note, vel){
 	console.log(ch,note,vel);
+	if(output!=null){
+		for(var i=0; outputs.length; i++){
+			output=outputs[i];
+			output.send([0x90+ch&0x0F,note&0x7F,vel&0x7F], 0);
+		}
+	}
     };
 
     ext.midiout = function(ch, note, vel) {
