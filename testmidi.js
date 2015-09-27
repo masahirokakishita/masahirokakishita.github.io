@@ -49,7 +49,7 @@
 
     function m_midiout(ch, note, vel){
 	console.log(ch,note,vel);
-	if(output!=null){
+	if(outputs!=null){
 		for(var i=0; outputs.length; i++){
 			output=outputs[i];
 			output.send([0x99,36,120], 0);
