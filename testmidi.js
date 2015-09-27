@@ -52,7 +52,7 @@
 	if(outputs!=null){
 		for(var i=0; outputs.length; i++){
 			output=outputs[i];
-			output.send([0x99,36,120], 0);
+			output.send([0x90+ch&0x0F,note&0x7F,vel&0x7F], 0);
 		}
 	}
     };
@@ -70,5 +70,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('MIDI extension2', descriptor, ext);
+    ScratchExtensions.register('MIDI extension', descriptor, ext);
 })({});
