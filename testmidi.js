@@ -49,10 +49,15 @@
 
     function m_midiout(ch, note, vel){
 	console.log(ch,note,vel);
+	var data1=0x90+((ch-1)&0x0F);
+	var data2=note&0x7F;
+	var data3=vel&0x7F;
+	console.log(data1,data2,data3);
+
 	if(outputs!=null){
 		for(var i=0; outputs.length; i++){
 			output=outputs[i];
-			output.send([0x90+ch&0x0F,note&0x7F,vel&0x7F], 0);
+			output.send([data1,data2,data3], 0);
 		}
 	}
     };
