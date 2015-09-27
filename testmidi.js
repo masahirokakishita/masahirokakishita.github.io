@@ -70,5 +70,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('MIDI extension', descriptor, ext);
+    ScratchExtensions.register('MIDI extension2', descriptor, ext);
 })({});
