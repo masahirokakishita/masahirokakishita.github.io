@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+	<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta name="Keywords" content="webMIDIAPI,WebMidiApi,webmidiapi">
+	<title>Door Phone</title>
+	<script type="text/javascript" src="drawgraph.js"></script>
+	<script type="text/javascript" src="mqttws31.js"></script>
+	<script type="text/javascript" src="mqttmain.js"></script>
+	<link rel="stylesheet" media="screen" href="disp101.css">
+
+  <style type="text/css">
+    <!--
+    #sans { color: black; font-family:sans-serif ;  font-size: 10pt; line-height : 1.5em}
+	#mono { color: black; font-family:monospace ; font-size: 10pt; line-height : 1.5em}
+	#2-1mar2 { margin: 20px 40px; backGround-color: pink; } 
+
+    #log {
+     width:20em;
+     height:12em;
+     margin:.5em 0 .5em 0;
+     padding:.5em;
+     background-color:#eee;
+     border:solid 1px #888;
+     white-space:pre;
+     font-family:Courier New, monospace;
+     font-size:.75em;
+     overflow:auto;
+    }
+    -->
+    </style>
+
+<!-- ----------------------------------------------------------------	-->
+<script>
+
+	function LocalAudioBuffer()
+	{
+		this.buffer=0;
+		this.length=0;
+		this.counter=0;
+		this.vel=0;
+	}
+
+	LocalAudioBuffer.prototype={
+		fSetBuffer : function(buffer){ 
+			this.buffer=buffer.getChannelData(0);
+			this.length=buffer.length;
+			this.counter=buffer.length;
+		},
+
+		fReadData : function(){
+			if(this.counter==this.length) this.data=0;
+			else {
+				this.data=this.buffer[this.counter];
+				this.counter++;
+			}
+			return this.vel*this.data;
+		},
+
+		fClearCounter : function(){
+			this.counter=0;
+		}
+
+	}
+
+</script>
+
+<!-- ----------------------------------------------------------------	-->
+<script>
+
+	//for Audio PayBack
+	var mAudioBuffer= Array(16);
+	var mLocalAudioBuffer= Array(16);
+	var audioSource;
+	var audioContext;
+	var playflag=0;
+	var mFlag=0;
+	var mWaveLoad=0;
+
+	function loadDogSound(url, n) {
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+		console.log(url);
+
+	// Decode asynchronously
+		request.onload = function() {
+			audioContext.decodeAudioData(request.response, function(buffer) {
+			mAudioBuffer[n]= buffer; 
+			mWaveLoad++;
+			}, function(){ alert('Error'); } );
+		}
+		request.send();
+	}
+
+	//Audio Initialize
+	var audioContext = new AudioContext(); //Use Audio Interface
+	var node = audioContext.createScriptProcessor(1024, 2, 2);
+	var myArrayBuffer = audioContext.createBuffer(2, 1024, audioContext.sampleRate);
+ 	var gainG = audioContext.createGain();	//Make Gain Node
+	var sampleRate = audioContext.sampleRate;
+	gainG.gain.value = 1.0;
+
+	// Audio Node Connection
+	var audiosource;
+	audiosource = audioContext.createBufferSource();
+	audiosource.buffer = myArrayBuffer;
+	audiosource.connect(node);
+	node.connect(gainG);
+	gainG.connect(audioContext.destination);
+
+	//Set Process for buffer full
+	node.onaudioprocess=process;
+
+	//Load Files
+/*
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_BD.wav",0);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_CCY.wav",1);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_CH.wav",2);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_HCP.wav",3);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_HT.wav",4);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_LT.wav",5);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_MT.wav",6);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_OH.wav",7);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_RCY.wav",8);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_RIM.wav",9);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_SD.wav",10);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_HAT.WAV",11);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_KICK.WAV",12);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_NAR.WAV",13);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_RIM.WAV",14);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/CCC_TOM.WAV",15);
+*/
+
+
+var huga = 0;
+var hoge = setInterval(function() {
+    console.log(huga);
+	switch(huga){
+	case 0:
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/2015.10.11_14.39.mp3",0);
+	break;
+
+	case 1:
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/2015.10.11_14.40.mp3",1);
+	break;
+
+	case 2:
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/2015.10.11_14.49.mp3",2);
+	break;
+
+	case 3:
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/2015.10.11_14.58.mp3",3);
+	break;
+	}
+
+    huga++;
+    //終了条件
+    if (huga == 4) {
+    clearInterval(hoge);
+    console.log("終わり");
+    }
+}, 500);
+
+
+/*	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/AAA_HT.wav",4);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/AAA_LT.wav",5);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/AAA_MT.wav",6);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/AAA_OH.wav",7);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/AAA_RCY.wav",8);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/AAA_RIM.wav",9);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/AAA_SD.wav",10);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/BBB_HAT.WAV",11);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/BBB_KICK.WAV",12);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/BBB_NAR.WAV",13);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/BBB_RIM.WAV",14);
+	loadDogSound("http://www.mmm.ne.jp/~kaki/padpng/CCC_TOM.WAV",15);
+*/
+
+	function process(data){	//Make a wave
+		var outputL=data.outputBuffer.getChannelData(0);
+		var outputR=data.outputBuffer.getChannelData(1);
+		var procsize = data.inputBuffer.length;
+		var data=new Array(procsize);
+
+		for(var i=0; i<procsize; i++){
+			data[i]=0;
+		}
+
+		if(mFlag==1){
+			for(var i=0; i<procsize; i++){
+				for(j=0; j<16; j++){
+					data[i]+=mLocalAudioBuffer[j].fReadData();
+				}
+			}
+		}
+
+		for(var i=0; i<procsize; i++){
+			outputL[i]=outputR[i]=data[i];
+		}
+	}
+	</script>
+
+</HEAD>
+
+<body bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#ff00ff" alink="#ff0000" 
+style="margin-right:28px;margin-left:28px;margin-top:20px;">
+<br>
+<center><h2>Door Phone Experiment<h2>
+<div id="sans">2015.10.13</center>
+
+<!--	-------------------------------------------------------------------- -->
+<center>
+<div id="canvas">
+<canvas id="bkg"></canvas>
+<video id="myVideo" autoplay></video>
+</div>
+</center>
+<!--	-------------------------------------------------------------------- -->
+<script>
+	/* 背景描画領域の初期化 */
+	var fdg1 = new DrawGraph(0,1200,0,768);
+	fdg1.fSetCanvas(document.getElementById('bkg'));
+	fdg1.fResize();
+	fdg1.fLine(0,0,1000,fdg1.cv.height);
+	fdg1.fLine(1000,0,0,fdg1.cv.height);
+
+	var img_pad =new Array(9);
+
+	for(var i=0; i<9; i++) img_pad[i]= new Image();
+	img_pad[0].src = "1FIO37dpWF4ik8zW.png";
+	img_pad[1].src = "padpng/btn052_01_1.png";
+	img_pad[2].src = "padpng/btn052_03_1.png";
+	img_pad[3].src = "padpng/btn052_05_1.png";
+	img_pad[4].src = "padpng/btn052_07_1.png";
+
+	img_pad[5].src = "padpng/btn052_01.png";
+	img_pad[6].src = "padpng/btn052_03.png";
+	img_pad[7].src = "padpng/btn052_05.png";
+	img_pad[8].src = "padpng/btn052_07.png";
+
+	var xpos=Array(8);
+	var ypos=Array(8);
+
+	img_pad[8].onload= function() {
+
+		var imgh=img_pad[1].height;
+		var imgw=img_pad[1].width;
+		
+		for(var i=0; i<4; i++){
+			xpos[i*2]=fdg1.cv.width - 300;
+			xpos[i*2+1]=xpos[i*2]+200;
+		}
+
+		for(var i=0; i<4; i++){
+			ypos[i*2]=200+i*100;
+			ypos[i*2+1]=ypos[i*2]+80;
+		}
+
+		fdg1.fDrawImageW(img_pad[0],0,0,fdg1.cv.width,fdg1.cv.height);
+		fdg1.fDrawImageW(img_pad[1],xpos[0],ypos[0],200,80);
+		fdg1.fDrawImageW(img_pad[2],xpos[0],ypos[2],200,80);
+		fdg1.fDrawImageW(img_pad[3],xpos[0],ypos[4],200,80);
+		fdg1.fDrawImageW(img_pad[4],xpos[0],ypos[6],200,80);
+
+	}
+
+	var mNote=0;
+
+	function goAnimation(){
+		var xp=fdg1.mcX;
+		var yp=fdg1.mcY;
+
+		var ip=-1; iq=-1, ihit=-1;
+
+		for(var i=0; i<4; i++){
+			if(xpos[i*2]<xp && xp<xpos[i*2+1]){
+				ip=i;
+				break;
+			}
+		}
+
+		for(var i=0; i<4; i++){
+			if(ypos[i*2]<yp && yp<ypos[i*2+1]){
+				iq=i;
+				break;
+			}
+		}
+
+		if(ip!=-1 && iq!=-1){
+			ihit = iq; //*4+ip;
+		}
+
+		if(ihit!= -1){
+			mNote=ihit;
+			publishmidi(mNote);
+		}
+	}
+
+	function fsend(note){
+		console.log(note);
+
+		switch(note){
+			case 0:
+			fdg1.fDrawImageW(img_pad[5],xpos[0],ypos[0],200,80);
+			break;
+			case 1:
+			fdg1.fDrawImageW(img_pad[6],xpos[0],ypos[2],200,80);
+			break;
+			case 2:
+			fdg1.fDrawImageW(img_pad[7],xpos[0],ypos[4],200,80);
+			break;
+			case 3:
+			fdg1.fDrawImageW(img_pad[8],xpos[0],ypos[6],200,80);
+			break;
+		}
+
+		playSound(note,127);
+
+		var timerId=setInterval(function(){
+			switch(note){
+				case 0:
+				fdg1.fDrawImageW(img_pad[1],xpos[0],ypos[0],200,80);
+				break;
+				case 1:
+				fdg1.fDrawImageW(img_pad[2],xpos[0],ypos[2],200,80);
+				break;
+				case 2:
+				fdg1.fDrawImageW(img_pad[3],xpos[0],ypos[4],200,80);
+				break;
+				case 3:
+				fdg1.fDrawImageW(img_pad[4],xpos[0],ypos[6],200,80);
+				break;
+			}
+			clearInterval(timerId);
+		}, 2000 );
+
+	}
+
+	function goMouseUp(){
+//		publishmidi(mNote);
+	}
+
+	function playSound(note,vel){
+		mLocalAudioBuffer[note].counter=0;
+		mLocalAudioBuffer[note].vel=0.2+0.8*vel/127.;
+	}
+
+</script>
+
+<!--	-------------------------------------------------------------------- -->
+<br><br><br><br>
+<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
+<div id="log">
+</div>
+</body>
+<!--	-------------------------------------------------------------------- -->
+<script>
+{
+	navigator.getUserMedia = ( navigator.getUserMedia ||
+		navigator.webkitGetUserMedia ||
+		navigator.mozGetUserMedia ||
+		navigator.msGetUserMedia);
+
+	function soundThrough() {
+		navigator.getUserMedia({ video: true },
+
+		function(stream){
+			var video = document.querySelector('video#myVideo');
+			video.src = window.URL.createObjectURL(stream);
+			localMediaStream = stream;
+			video.onloadedmetadata = function(e) {
+				video.play();
+			};
+
+		},
+
+		function(e) {
+			console.log(e);
+		}
+		);
+	}
+
+
+	soundThrough();
+}
+</script>
+
+<!--	-------------------------------------------------------------------- -->
+<script>
+		log = document.getElementById("log");
+
+		log.innerText =fdg1.cv.width +" ";
+		log.innerText +=fdg1.cv.height;
+		log.innerText +="\n";
+
+/*	for(var i=0; i<4; i++){
+
+		log.innerText += xpos[i*2];
+		log.innerText += " ";
+		log.innerText += ypos[i*2];
+		log.innerText += " ";
+		log.innerText += xpos[i*2+1];
+		log.innerText += " ";
+		log.innerText += ypos[i*2+1];
+		log.innerText += " ";
+		log.innerText +="\n";
+	}
+*/
+
+	for(var i=0; i<16; i++){
+		mLocalAudioBuffer[i]=new LocalAudioBuffer();
+	}
+
+	var waitId=setInterval(function(){
+		if(mWaveLoad!=4){
+			alert( "NGNGNG and reload");
+		} else {
+			log.innerText +="Sound File Ready\n";
+			for(var i=0; i<4; i++){
+				mLocalAudioBuffer[i].fSetBuffer(mAudioBuffer[i]);
+			}
+		}
+		clearInterval(waitId);
+	}, 4000 );
+
+	mFlag=1;
+
+</script>
+
+<!--	-------------------------------------------------------------------- -->
+<script>
+	log.innerText +="start of connect\n";
+	connect();
+	log.innerText +="end of connect\n";
+</script>
+
+</html>
+

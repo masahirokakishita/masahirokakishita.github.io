@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<script type="text/javascript" src="mqttws31.js"></script>
+<script>
+var client;							// MQTTのクライアントです
+var clientId = "clientid";			// ClientIDを指定します。
+
+function connect(){
+    var user_name = "masahirokakishita@github";
+    var pass = "UtlX750a62h1PmK3";
+    var wsurl = "ws://lite.mqtt.shiguredo.jp/mqtt";
+	var number = Math.floor(256*Math.random());
+	clientId+=String(number);
+
+    // WebSocketURLとClientIDからMQTT Clientを作成します
+    client = new Paho.MQTT.Client(wsurl, clientId);
+
+    // connectします
+    client.connect({userName: user_name, password: pass, onSuccess:onConnect, onFailure: failConnect});
+}
+
+// 接続が失敗したら呼び出されます
+function failConnect(e) {
+    console.log("connect failed");
+    console.log(e);
+}
+
+// 接続に成功したら呼び出されます
+function onConnect() {
+    console.log("onConnect");
+}
+
+ // メッセージが到着したら呼び出されるコールバック関数
+ function onMessageArrived(message) {
+     console.log("onMessageArrived:"+message.payloadString);
+ }
+
+function subscribe(){
+    // コールバック関数を登録します
+    client.onMessageArrived = onMessageArrived;
+
+    var topic = "masahirokakishita@github";
+    // Subscribeします
+    client.subscribe(topic);
+}
+
+function publish(){
+    var topic = "masahirokakishita@github";
+    message = new Paho.MQTT.Message("Hello");
+    message.destinationName = topic;
+    client.send(message);
+}
+
+
+</script>
+
+<body>
+<h3>Publish</n3>
+
+
+</body>
+<script>
+connect();
+publish();
+</script>
+
+</html>

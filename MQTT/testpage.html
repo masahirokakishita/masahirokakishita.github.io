@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+	<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<title>MQTT TEST</title>
+	<script type="text/javascript" src="drawgraph.js"></script>
+	<script type="text/javascript" src="mqttws31.js"></script>
+	<script type="text/javascript" src="mqttmain.js"></script>
+	<script type="text/javascript" src="mywebmidiapi.js"></script>
+
+  <style type="text/css">
+    <!--
+    #sans { color: black; font-family:sans-serif ;  font-size: 10pt; line-height : 1.5em}
+	#mono { color: black; font-family:monospace ; font-size: 10pt; line-height : 1.5em}
+	#2-1mar2 { margin: 20px 40px; backGround-color: pink; } 
+
+    #log {
+     width:20em;
+     height:12em;
+     margin:.5em 0 .5em 0;
+     padding:.5em;
+     background-color:#eee;
+     border:solid 1px #888;
+     white-space:pre;
+     font-family:Courier New, monospace;
+     font-size:.75em;
+     overflow:auto;
+    }
+    -->
+    </style>
+<!-- ----------------------------------------------------------------	-->
+<script>
+{
+
+//	runTest()	//for MIDI
+
+	//Audio Initialize
+	var counter=new Array(16);
+	var period=new Array(16);
+	var mgain=new Array(16);
+	var noteon=new Array(16);
+	var notetime=new Array(16);
+	var toggle=0;
+
+	var audioContext = new AudioContext();
+	var audiosource;
+	var node = audioContext.createScriptProcessor(1024, 2, 2);
+	var myArrayBuffer = audioContext.createBuffer(2, 1024, audioContext.sampleRate);
+ 	var gainG = audioContext.createGain();
+	var sampleRate = audioContext.sampleRate;
+	gainG.gain.value = 1.0;
+
+	// Initialize Counter
+	var note=[60,62,64,65,67,69,71,72,74,76,77,79,81,83,84,86];
+
+	for(var i=0; i<16; i++){
+		counter[i]=0;
+		mgain[i]=0;
+		var notenum = note[i]-12;
+		var freq=440.0*Math.pow(2.0,(notenum-69)/12.0);
+		period[i] = freq/sampleRate;
+		noteon[i]=0;
+		notetime[i]=new Array(4);
+	}
+
+	notetime[0]=[1,0,0,0];
+	notetime[1]=[0,1,0,0];
+	notetime[2]=[0,0,1,0];
+	notetime[3]=[0,0,0,1];
+	notetime[4]=[1,1,0,0];
+	notetime[5]=[1,0,1,0];
+	notetime[6]=[0,1,0,1];
+	notetime[7]=[1,0,1,0];
+	notetime[8]=[0,1,0,1];
+	notetime[9]=[0,1,1,0];
+	notetime[10]=[1,1,1,0];
+	notetime[11]=[0,1,1,1];
+	notetime[12]=[1,1,1,0];
+	notetime[13]=[0,1,1,1];
+	notetime[14]=[0,0,1,1];
+	notetime[15]=[1,1,1,1];
+
+	// Audio Node Connection
+	audiosource = audioContext.createBufferSource();
+	audiosource.buffer = myArrayBuffer;
+	audiosource.connect(node);
+	node.connect(gainG);
+	gainG.connect(audioContext.destination);
+
+	//Set Process
+	node.onaudioprocess=process;
+
+	function process(data){
+		var outputL=data.outputBuffer.getChannelData(0);
+		var outputR=data.outputBuffer.getChannelData(1);
+		var procsize = data.inputBuffer.length;
+		var data=new Array(procsize);
+
+		for(var i=0; i<procsize; i++){
+			data[i]=0;
+			for(var j=0;  j<16; j++){
+				data[i]+=(mgain[j]*counter[j]);
+				counter[j]+=period[j];
+				if(counter[j]>=1.0) counter[j]-=2.0;
+				mgain[j]*=0.999;
+			}
+		}
+
+		for(var i=0; i<procsize; i++){
+			outputL[i]=outputR[i]=data[i];
+		}
+	}
+}
+	</script>
+
+</HEAD>
+
+<!--	-------------------------------------------------------------------- -->
+<body bgcolor="#eeeeee" text="#000000" link="#0000ff" vlink="#ff00ff" alink="#ff0000" style="margin-right:28px;margin-left:28px;margin-top:20px;">
+<br>
+<center><h2>TEST<h2></center>
+
+<!--	-------------------------------------------------------------------- -->
+<center>
+<div id="canvas">
+<canvas id="bkg"></canvas>
+</div>
+</center>
+<!--	-------------------------------------------------------------------- -->
+<script>
+	var fdg1 = new DrawGraph(0,1200,0,768);
+	fdg1.fSetCanvas(document.getElementById('bkg'));
+	fdg1.fResize();
+//	fdg1.fLine(0,0,1000,fdg1.cv.height);
+//	fdg1.fLine(1000,0,0,fdg1.cv.height);
+
+	var xpos=Array(8);
+	var ypos=Array(8);
+	const XW0=110;
+	const XB0=400;
+	const XD0=0;
+
+	const YW0=110;
+	const YB0=20;
+	const YD0=0;
+
+// for click
+	var timerId=null;
+	var ip=-1; iq=-1, ihit=-1;
+
+	var timerId=setInterval(function(){
+		for(var i=0; i<16; i++){
+			if(noteon[i] && notetime[i][toggle]) mgain[i] = 1.0;
+		}
+
+//			if(noteon[i]==1&&toggle){
+//				mgain[i] = 1.0;
+//			} else {
+//				mgain[i] = 0.0;
+//			}
+//		}
+
+		toggle++;
+		if(toggle==4) toggle=0;
+
+	}, 100 );
+
+// for note
+
+	for(var i=0; i<4; i++){
+		xpos[i*2]=Math.floor(XB0+(XW0+XD0)*i);
+		xpos[i*2+1]=xpos[i*2]+XW0;
+		ypos[i*2]=Math.floor(YB0+(YW0+YD0)*i);
+		ypos[i*2+1]=ypos[i*2]+YW0;
+	}
+
+	for(var i=0; i<4; i++){
+		for(var j=0; j<4; j++){
+			fdg1.fLine(xpos[j*2],ypos[i*2],xpos[j*2+1],ypos[i*2]);
+			fdg1.fLine(xpos[j*2+1],ypos[i*2],xpos[j*2+1],ypos[i*2+1]);
+			fdg1.fLine(xpos[j*2+1],ypos[i*2+1],xpos[j*2],ypos[i*2+1]);
+			fdg1.fLine(xpos[j*2],ypos[i*2+1],xpos[j*2],ypos[i*2]);
+		}
+	}
+
+	function goAnimation(){
+		var xp=fdg1.mcX;
+		var yp=fdg1.mcY;
+
+		for(var i=0; i<4; i++){
+			if(xpos[i*2]<xp && xp<xpos[i*2+1]){
+				ip=i;
+				break;
+			}
+		}
+
+		for(var i=0; i<4; i++){
+			if(ypos[i*2]<yp && yp<ypos[i*2+1]){
+				iq=i;
+				break;
+			}
+		}
+
+		if(ip!=-1 && iq!=-1){
+			ihit = iq*4+ip;
+		}
+
+		if(ihit!= -1){
+			publishmidi(ihit+60);
+//			mgain[ihit] = 1.0;
+//			toggle=1;
+
+		}
+
+	}
+
+	function goMouseUp(){
+		publishmidi(ihit+120);
+//		mgain[ihit] = 0.0;
+//		clearInterval(timerId);
+	}
+
+	function goNoteon(note)
+	{
+		var velo=127;
+
+		if(note>=120){
+			note-=60;
+			velo=0;
+		}
+
+		var j=note-60;
+		iq=Math.floor(j/4);
+		ip=j-iq*4;
+
+		if(velo!=0){
+			fdg1.ctx.fillStyle = "#999999";
+			fdg1.ctx.fillRect(xpos[ip*2]+1, ypos[iq*2]+1, XW0-2,YW0-2);
+			noteon[j]=1;
+		} else {
+			fdg1.ctx.fillStyle = "#eeeeee";
+			fdg1.ctx.fillRect(xpos[ip*2]+1, ypos[iq*2]+1, XW0-2,YW0-2);
+			noteon[j]=0;
+		}
+	}
+
+
+	function fsend(note){
+		var velo=127;
+
+		if(note>=120){
+			note-=60;
+			velo=0;
+		}
+
+		var j=note-60;
+		iq=Math.floor(j/4);
+		ip=j-iq*4;
+
+		if(velo!=0){
+			fdg1.ctx.fillStyle = "#999999";
+			fdg1.ctx.fillRect(xpos[ip*2]+1, ypos[iq*2]+1, XW0-2,YW0-2);
+			noteon[j]=1;
+		} else {
+			fdg1.ctx.fillStyle = "#eeeeee";
+			fdg1.ctx.fillRect(xpos[ip*2]+1, ypos[iq*2]+1, XW0-2,YW0-2);
+			noteon[j]=0;
+		}
+
+//		outMessage3(0x91,note[j],velo);	//note on to MIDI Device
+
+	}
+
+</script>
+
+<!--	for MIDI
+<br>
+<button onclick="publish()">publish</button>
+<button onclick="publishmidi(10,20,30)">midi</button>
+<br><br>
+
+入力：
+<form name="input_device_select">
+<select name="ids" onChange="inputDeviceSelect(this);">
+<option value="0">No Device
+</select>
+</form>
+<script>setInputMenuID(document.input_device_select.ids);</script>
+
+出力：
+<form name="output_device_select">
+<select name="ids" onChange="outputDeviceSelect(this);">
+<option value="0">No Device
+</select>
+</form>
+<script>setOutputMenuID(document.output_device_select.ids);</script>
+-->
+
+<!--	-------------------------------------------------------------------- -->
+<script>
+</script>
+
+<!--	-------------------------------------------------------------------- -->
+<br><br>
+<div id="log">
+</div>
+</body>
+<script>
+	log = document.getElementById("log");
+
+	log.innerText =fdg1.cv.width +" ";
+	log.innerText +=fdg1.cv.height;
+	log.innerText +="\n";
+
+	for(var i=0; i<4; i++){
+
+		log.innerText += xpos[i*2];
+		log.innerText += " ";
+		log.innerText += ypos[i*2];
+		log.innerText += " ";
+		log.innerText += xpos[i*2+1];
+		log.innerText += " ";
+		log.innerText += ypos[i*2+1];
+		log.innerText += " ";
+		log.innerText +="\n";
+	}
+
+	log.innerText +="start of connect\n";
+	connect();
+	log.innerText +="end of connect\n";
+
+</script>
+</html>
+

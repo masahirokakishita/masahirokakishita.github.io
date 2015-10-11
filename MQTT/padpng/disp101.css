@@ -1,0 +1,41 @@
+#bkg {
+ position:absolute;
+// background-color:#cccccc;
+ border:solid 1px #eee;
+
+ margin: 0 auto;
+ top: 200px;
+ left: 20%;
+ height: 460px;
+ width: 60%;
+ z-index: 1;
+}
+#ph0 {
+ position:absolute;
+ margin: 0 auto;
+ top: 200px;
+ left: 0px;
+ z-index: 10;
+}
+#ph1 {
+ position:absolute;
+ margin: 0 auto;
+ top: 0px;
+ left: 0px;
+ z-index: 11;
+}
+#ph2 {
+ position:absolute;
+ margin: 0 auto;
+ top: 0px;
+ left: 0px;
+ z-index: 12;
+}
+#ph3 {
+ position:absolute;
+ margin: 0 auto;
+ top: 0px;
+ left: 0px;
+ z-index: 13;
+}
+

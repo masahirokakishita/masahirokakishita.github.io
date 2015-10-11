@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+	<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<meta name="Keywords" content="webMIDIAPI,WebMidiApi,webmidiapi">
+	<title>Percussion Pad</title>
+	<script type="text/javascript" src="padpng/drawgraph.js"></script>
+	<script type="text/javascript" src="mywebmidiapi.js"></script>
+	<link rel="stylesheet" media="screen" href="padpng/disp101.css">
+
+  <style type="text/css">
+    <!--
+    #sans { color: black; font-family:sans-serif ;  font-size: 10pt; line-height : 1.5em}
+	#mono { color: black; font-family:monospace ; font-size: 10pt; line-height : 1.5em}
+	#2-1mar2 { margin: 20px 40px; backGround-color: pink; } 
+
+    #log {
+     width:20em;
+     height:12em;
+     margin:.5em 0 .5em 0;
+     padding:.5em;
+     background-color:#eee;
+     border:solid 1px #888;
+     white-space:pre;
+     font-family:Courier New, monospace;
+     font-size:.75em;
+     overflow:auto;
+    }
+    -->
+    </style>
+
+<!-- ----------------------------------------------------------------	-->
+<script>
+
+	function LocalAudioBuffer()
+	{
+		this.buffer=0;
+		this.length=0;
+		this.counter=0;
+		this.vel=0;
+	}
+
+	LocalAudioBuffer.prototype={
+		fSetBuffer : function(buffer){ 
+			this.buffer=buffer.getChannelData(0);
+			this.length=buffer.length;
+			this.counter=buffer.length;
+		},
+
+		fReadData : function(){
+			if(this.counter==this.length) this.data=0;
+			else {
+				this.data=this.buffer[this.counter];
+				this.counter++;
+			}
+			return this.vel*this.data;
+		},
+
+		fClearCounter : function(){
+			this.counter=0;
+		}
+
+	}
+
+</script>
+
+<!-- ----------------------------------------------------------------	-->
+<script>
+
+	//for Audio PayBack
+	var mAudioBuffer= Array(16);
+	var mLocalAudioBuffer= Array(16);
+	var audioSource;
+	var audioContext;
+	var playflag=0;
+	var mFlag=0;
+
+	function loadDogSound(url, n) {
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+
+	// Decode asynchronously
+		request.onload = function() {
+			audioContext.decodeAudioData(request.response, function(buffer) {
+			mAudioBuffer[n]= buffer; 
+			}, function(){ alert('Error'); } );
+		}
+		request.send();
+	}
+
+	//Audio Initialize
+	var audioContext = new AudioContext(); //Use Audio Interface
+	var node = audioContext.createScriptProcessor(1024, 2, 2);
+	var myArrayBuffer = audioContext.createBuffer(2, 1024, audioContext.sampleRate);
+ 	var gainG = audioContext.createGain();	//Make Gain Node
+	var sampleRate = audioContext.sampleRate;
+	gainG.gain.value = 1.0;
+
+	// Audio Node Connection
+	var audiosource;
+	audiosource = audioContext.createBufferSource();
+	audiosource.buffer = myArrayBuffer;
+	audiosource.connect(node);
+	node.connect(gainG);
+	gainG.connect(audioContext.destination);
+
+	//Set Process for buffer full
+	node.onaudioprocess=process;
+
+	//Load Files
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_BD.wav",0);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_CCY.wav",1);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_CH.wav",2);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_HCP.wav",3);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_HT.wav",4);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_LT.wav",5);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_MT.wav",6);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_OH.wav",7);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_RCY.wav",8);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_RIM.wav",9);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/AAA_SD.wav",10);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_HAT.WAV",11);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_KICK.WAV",12);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_NAR.WAV",13);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/BBB_RIM.WAV",14);
+	loadDogSound("http://haramikata.jougennotuki.com/TEST/padpng/CCC_TOM.WAV",15);
+
+	function process(data){	//Make a wave
+		var outputL=data.outputBuffer.getChannelData(0);
+		var outputR=data.outputBuffer.getChannelData(1);
+		var procsize = data.inputBuffer.length;
+		var data=new Array(procsize);
+
+		for(var i=0; i<procsize; i++){
+			data[i]=0;
+		}
+
+		if(mFlag==1){
+			for(var i=0; i<procsize; i++){
+				for(j=0; j<16; j++){
+					data[i]+=mLocalAudioBuffer[j].fReadData();
+				}
+			}
+		}
+
+		for(var i=0; i<procsize; i++){
+			outputL[i]=outputR[i]=data[i];
+		}
+	}
+	</script>
+
+</HEAD>
+
+<body bgcolor="#ccccff" text="#000000" link="#0000ff" vlink="#ff00ff" alink="#ff0000" 
+style="margin-right:28px;margin-left:28px;margin-top:20px;">
+<br>
+<center><h2>Web MIDI API Experiment<h2></center>
+<center><h4>Percussion Pad with MIDI</h4>
+<div id="sans">2015.8.8</center>
+
+<!--	-------------------------------------------------------------------- -->
+<center>
+<div id="canvas">
+<canvas id="bkg"></canvas>
+</div>
+</center>
+<!--	-------------------------------------------------------------------- -->
+<script>
+	/* 背景描画領域の初期化 */
+	var fdg1 = new DrawGraph(0,1200,0,768);
+	fdg1.fSetCanvas(document.getElementById('bkg'));
+	fdg1.fResize();
+//	fdg1.fLine(0,0,1000,fdg1.cv.height);
+//	fdg1.fLine(1000,0,0,fdg1.cv.height);
+
+	var img_pad =new Array(5);
+	for(var i=0; i<5; i++) img_pad[i]= new Image();
+	img_pad[0].src = "padpng/pad_dblue.png";
+	img_pad[1].src = "padpng/pad_blue.png";
+	img_pad[2].src = "padpng/pad_green.png";
+	img_pad[3].src = "padpng/pad_orange.png";
+	img_pad[4].src = "padpng/pad_red.png";
+
+	var xpos=Array(8);
+	var ypos=Array(8);
+	const XW0=110;
+	const XB0=280;
+	const XD0=(fdg1.cv.width-XW0*4-XB0*2)/3;
+
+	const YW0=130;
+	const YB0=60;
+	const YD0=(fdg1.cv.height-YW0*4-YB0*2)/5;
+	
+	for(var i=0; i<4; i++){
+		xpos[i*2]=Math.floor(XB0+(XW0+XD0)*i);
+		xpos[i*2+1]=xpos[i*2]+XW0;
+		ypos[i*2]=Math.floor(YB0+(YW0+YD0)*i);
+		ypos[i*2+1]=ypos[i*2]+YW0;
+	}
+
+	img_pad[0].onload= function() {
+		for(var i=0; i<4; i++){
+			for(var j=0; j<4; j++){
+				fdg1.fDrawImageW(img_pad[0],xpos[j*2],ypos[i*2],XW0,YW0);
+//				fdg1.fLine(xpos[j*2],ypos[i*2],xpos[j*2+1],ypos[i*2+1]);
+			}
+		}
+	}
+
+	function goAnimation(){
+		var xp=fdg1.mcX;
+		var yp=fdg1.mcY;
+
+		var ip=-1; iq=-1, ihit=-1;
+
+		for(var i=0; i<4; i++){
+			if(xpos[i*2]<xp && xp<xpos[i*2+1]){
+				ip=i;
+				break;
+			}
+		}
+
+		for(var i=0; i<4; i++){
+			if(ypos[i*2]<yp && yp<ypos[i*2+1]){
+				iq=i;
+				break;
+			}
+		}
+
+		if(ip!=-1 && iq!=-1){
+			ihit = iq*4+ip;
+		}
+
+		if(ihit!= -1){
+			fdg1.fDrawImageW(img_pad[3],xpos[ip*2],ypos[iq*2],XW0,YW0);
+			playSound(iq*4+ip,127);
+			var timerId=setInterval(function(){
+				fdg1.fDrawImageW(img_pad[0],xpos[ip*2],ypos[iq*2],XW0,YW0);
+				clearInterval(timerId);
+			}, 600 );
+
+		}
+	}
+
+	function playSound(note,vel){
+		mLocalAudioBuffer[note].counter=0;
+		mLocalAudioBuffer[note].vel=0.2+0.8*vel/127.;
+	}
+
+</script>
+<br><br><br><br>
+
+<!--	------------------------------------------------------------------ -->
+<div id="sans">
+入力：
+<form name="input_device_select">
+<select name="ids" onChange="the_InputDeviceSelect(this);">
+<option value="0">No Device
+</select>
+</form>
+出力：
+<form name="output_device_select">
+<select name="ids" onChange="outputDeviceSelect(this);">
+<option value="0">No Device
+</select>
+</form>
+</div>
+
+<!--	-------------------------------------------------------------------- -->
+<script>
+//MIDI
+	runTest();
+	setInputMenuID(document.input_device_select.ids);
+	setOutputMenuID(document.output_device_select.ids);
+
+	function the_InputDeviceSelect(e){
+		inputDeviceSelect(e);
+		input.onmidimessage = the_HandleMIDIMessage2;
+	}
+
+	function the_HandleMIDIMessage2( event ) {
+
+	switch( event.data[0] & 0xf0 ){
+		case 0x80:
+			break;	//note off
+		case 0x90:
+			var note = event.data[1]-35;
+			if( note<16 ){
+				var ip=note%4;
+				var iq=note>>2;
+				fdg1.fDrawImageW(img_pad[3],xpos[ip*2],ypos[iq*2],XW0,YW0);
+				playSound(note,event.data[2]);
+				var timerId=setInterval(function(){
+					fdg1.fDrawImageW(img_pad[0],xpos[ip*2],ypos[iq*2],XW0,YW0);
+					clearInterval(timerId);
+				}, 600 );
+			}
+			break;	//note on
+		case 0xA0:
+			break;	//key pressure
+		case 0xB0:
+			break;	//control change
+		case 0xC0:
+			break;	//program change
+		case 0xD0:	
+			break;	//after touch
+		case 0xE0:	
+			break;	//pitch bend
+		case 0xF0:
+			recieveSystemMessage( event.data );
+			break;	//system message
+		}
+
+	}
+
+</script>
+
+<!--	-------------------------------------------------------------------- -->
+<br><br><br><br>
+<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
+<div id="log">
+</div>
+</body>
+<script>
+		log = document.getElementById("log");
+
+		log.innerText =fdg1.cv.width +" ";
+		log.innerText +=fdg1.cv.height;
+		log.innerText +="\n";
+
+	for(var i=0; i<4; i++){
+
+		log.innerText += xpos[i*2];
+		log.innerText += " ";
+		log.innerText += ypos[i*2];
+		log.innerText += " ";
+		log.innerText += xpos[i*2+1];
+		log.innerText += " ";
+		log.innerText += ypos[i*2+1];
+		log.innerText += " ";
+		log.innerText +="\n";
+	}
+
+	for(var i=0; i<16; i++){
+		mLocalAudioBuffer[i]=new LocalAudioBuffer();
+		mLocalAudioBuffer[i].fSetBuffer(mAudioBuffer[i]);
+	}
+
+	mFlag=1;
+
+</script>
+
+<!--	-------------------------------------------------------------------- -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66117399-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<!--	-------------------------------------------------------------------- -->
+
+</html>
+
