@@ -68,6 +68,7 @@
 
 	function m_midiin(event){
 		console.log(event.data[0]);
+		midiin(event.data[0]);
 	};
 
 
@@ -77,7 +78,7 @@
 
 
     ext.midiin = function(data, callback) {
-	callback(data);
+	return data;
     };
 
     // Block and block menu descriptions
