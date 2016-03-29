@@ -32,6 +32,10 @@
 		console.log("You can use MIDI API!");
 		console.log("input device=",inputs.length);
 		console.log("output device=",outputs.length);
+
+		for(bar i=0; i<inputs.length; i++){
+			inputs[i].onmidimessage = m_midiin;
+		}
 	}
 
 	function failure(error) {
@@ -47,20 +51,25 @@
         return {status: 2, msg: 'Ready'};
     };
 
-    function m_midiout(ch, note, vel){
-	console.log(ch,note,vel);
-	var data1=0x90+((ch-1)&0x0F);
-	var data2=note&0x7F;
-	var data3=vel&0x7F;
-	console.log(data1,data2,data3);
+	function m_midiout(ch, note, vel){
+		console.log(ch,note,vel);
+		var data1=0x90+((ch-1)&0x0F);
+		var data2=note&0x7F;
+		var data3=vel&0x7F;
+		console.log(data1,data2,data3);
 
-	if(outputs!=null){
-		for(var i=0; outputs.length; i++){
-			output=outputs[i];
-			output.send([data1,data2,data3], 0);
+		if(outputs!=null){
+			for(var i=0; outputs.length; i++){
+				output=outputs[i];
+				output.send([data1,data2,data3], 0);
+			}
 		}
-	}
-    };
+    	};
+
+	function m_midiin(event){
+		console.log(event.data[0]);
+	};
+
 
     ext.midiout = function(ch, note, vel) {
         m_midiout(ch, note, vel);
@@ -68,7 +77,7 @@
 
 
     ext.midiin = function(data, callback) {
-	callback(temperature);
+	callback(data);
     };
 
     // Block and block menu descriptions
