@@ -33,7 +33,7 @@
 		console.log("input device=",inputs.length);
 		console.log("output device=",outputs.length);
 
-		for(bar i=0; i<inputs.length; i++){
+		for(var i=0; i<inputs.length; i++){
 			inputs[i].onmidimessage = m_midiin;
 		}
 	}
