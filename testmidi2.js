@@ -68,7 +68,7 @@
 
 	function m_midiin(event){
 		console.log(event.data[0]);
-		midiin(event.data[0]);
+		ext.midiin(event.data[0]);
 	};
 
 
