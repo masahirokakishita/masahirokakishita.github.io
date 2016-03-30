@@ -66,9 +66,15 @@
 		}
     	};
 
-	function m_midiin(event){
+	function m_midiin(event,callback){
 		console.log(event.data[0]);
-		ext.midiin(event.data[0]);
+		var i=0;
+		var timerId=setInterval(function(){
+			callback(i);
+		i++;
+		if(i>=notes.length) { i=0; }
+		}, 500);
+
 	};
 
 
@@ -85,7 +91,7 @@
     var descriptor = {
         blocks: [
       [' ', 'MIDI OUT %n %n %n', 'midiout', 10, 36, 80],
-      ['r', 'MIDI IN %n', 'midiin', 30],
+      ['R, 'MIDI IN %n', 'midiin', 30],
       ['-'],
         ]
     };
