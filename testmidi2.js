@@ -89,7 +89,7 @@
     var descriptor = {
         blocks: [
       [' ', 'MIDI OUT %n %n %n', 'midiout', 10, 36, 80],
-      ['R, 'MIDI IN %n', 'midiin', 30],
+      ['R', 'MIDI IN %n', 'midiin', 30],
       ['-'],
         ]
     };
