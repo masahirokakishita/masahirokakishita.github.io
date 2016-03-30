@@ -68,13 +68,6 @@
 
 	function m_midiin(event,callback){
 		console.log(event.data[0]);
-		var i=0;
-		var timerId=setInterval(function(){
-			callback(i);
-		i++;
-		if(i>=notes.length) { i=0; }
-		}, 500);
-
 	};
 
 
@@ -84,7 +77,12 @@
 
 
     ext.midiin = function(data, callback) {
-	return data;
+	var i=0;
+	var timerId=setInterval(function(){
+		callback(i);
+	i++;
+	if(i>=notes.length) { i=0; }
+	}, 500);
     };
 
     // Block and block menu descriptions
