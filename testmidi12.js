@@ -100,6 +100,7 @@
 				mNote_on_event = true;
 				break;
 			case 0x90:
+				mNote_on_event = true;
 				break;
 			case 0xA0:
 				break;
