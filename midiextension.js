@@ -1,5 +1,27 @@
+/* -------------------------------------------------------------------------	*/
+/* Web MIDI API Extension for ScratchX 											*/
+/* (c)2016 Masahiro Kakishita													*/
+/*
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+/* -------------------------------------------------------------------------	*/
+
 (function(ext) {
 
+/* -------------------------------------------------------------------------	*/
+/* for Web MIDI API */
+/* -------------------------------------------------------------------------	*/
 	var m=null;
 	var inputs=null;
 	var input=null;
@@ -93,24 +115,39 @@
 		}
 	};
 
+// Put MIDI
     ext.midiout = function(ch, note, vel) {
         m_midiout(ch, note, vel);
     };
 
+// PUT CC
 // ccnum: Control Change Number
 	ext.ccin = function(ccnum) {
 		return (mCtlbuf[ccnum]);
 	};
 
+// GET NOTE ON
+	var alarm_went_off = false;
+	ext.noteonin = function() {
+		// Reset alarm_went_off if it is true, and return true
+		// otherwise, return false.
+		if (alarm_went_off === true) {
+			alarm_went_off = false;
+			return true;
+       }
+       return false;
+	};
+
 	// Block and block menu descriptions
 	var descriptor = {
 		blocks: [
-			[' ', 'MIDI OUT %n %n %n', 'midiout', 10, 36, 80],
-			['r', 'CC %n', 'ccin',30],
+			[' ', 'PUT MIDI %n %n %n', 'midiout', 10, 36, 80],
+			['r', 'GET CC %n', 'ccin',30],
+			['h', 'GET NOTE ON %n', 'noteonin',30],
 			['-'],
 		]
 	};
 
     // Register the extension
-    ScratchExtensions.register('MIDI extension', descriptor, ext);
+    ScratchExtensions.register('Web MIDI API extension', descriptor, ext);
 })({});
