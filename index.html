@@ -1,5 +1,57 @@
-<html>
-<body>
-<h2>Hello World?</h2>
-</body>
+﻿<!DOCTYPE html>
+<HTML>
+<HEAD>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Cache-Control" content="no-cache">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<title>Web MIDI Extension</title>
+
+  <style type="text/css">
+    <!--
+    #sans10 { color: black; font-family:sans-serif ;  font-size: 10pt; line-height : 1.5em}
+    #sans12 { color: black; font-family:sans-serif ;  font-size: 12pt; line-height : 1.5em}
+    #sans14 { color: black; font-family:sans-serif ;  font-size: 14pt; line-height : 1.5em}
+    #mono10 { color: black; font-family:monospace  ;  font-size: 10pt; line-height : 1.5em}
+    -->
+    </style>
+</HEAD>
+<body bgcolor="#defeef" text="#000000" link="#0000ff" vlink="#ff00ff" 
+alink="#ff0000" style="margin-right:30px;margin-left:30px;margin-top:20px;">
+<br>
+<!--	-------------------------------------------------------------------- -->
+<center><h2>Web MIDI API Extension for ScratchX</h2></center>
+<!--	-------------------------------------------------------------------- -->
+<div id="sans14">
+This extension is for using a MIDI device like a MIDI Controller at ScratchX.
+It's made by Web MIDI API.
+This API is one of the HTML5 functions defined by W3C.
+
+<ul>
+	<li>Web MIDI API Working Draft <a href="http://www.w3.org/TR/webmidi/" TARGET="_blank">http://webaudio.github.io/web-midi-api/</a>
+	<li>W3C <a href="http://www.w3.org/" TARGET="_blank">http://www.w3.org/</a>
+</ul>
+
+So this extension is able to use only on Chrome.
+The other browsers are not supporting Web MIDI API now, April 2016.
+<br>
+Do you know MIDI? MIDI is a protocol for connecting between MIDI Devices or a MIDI device to the PC. 
+If you don't know, please see like a following page.
+
+<ul>
+	<li>MIDI wiki <a href="https://en.wikipedia.org/wiki/MIDI" TARGET="_blank">https://en.wikipedia.org/wiki/MIDI</a>
+	<li>SUMMARY OF MIDI MESSAGES <a href="https://www.midi.org/specifications/" TARGET="_blank">https://www.midi.org/specifications</a>
+</ul>
+
+Before you try to use these extensions, you should connect a MIDI device to your PC via USB. 
+After you connect a MIDI device, you launch Chrome browser. 
+Because Chrome browser finds the MIDI device when it launches.
+<br><br>
+There are three blocks in this extension - a "GET CC", "GET NOTE ON" and a "PUT MIDI" block. 
+<br>
+<ul>
+<li>GET CC
+<li>GET NOTE ON
+<li>PUT MIDI
+</ul>
 </html>
