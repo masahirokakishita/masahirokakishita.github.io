@@ -90,12 +90,14 @@
 
 	var mCtlbuf = new Array(0x80);
 	for(var i=0; i<0x80; i++) mCtlbuf[i]=0;
+	var mNote_on_event = false;
 
 	/* MIDI parse */
 	function m_midiin(event){
 		console.log(event.data[0]);
 		switch(event.data[0]&0xF0){
 			case 0x80:
+				mNote_on_event = true;
 				break;
 			case 0x90:
 				break;
@@ -127,12 +129,11 @@
 	};
 
 // GET NOTE ON
-	var alarm_went_off = false;
 	ext.noteonin = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (alarm_went_off === true) {
-			alarm_went_off = false;
+		if (mNote_on_event === true) {
+			mNote_on_event = false;
 			return true;
        }
        return false;
@@ -143,7 +144,7 @@
 		blocks: [
 			[' ', 'PUT MIDI %n %n %n', 'midiout', 10, 36, 80],
 			['r', 'GET CC %n', 'ccin',30],
-			['h', 'GET NOTE ON %n', 'noteonin',30],
+			['h', 'GET NOTE ON', 'noteonin'],
 			['-'],
 		]
 	};
