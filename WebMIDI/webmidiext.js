@@ -79,6 +79,7 @@
 		}
 	};
 
+	var mCC_change_event=false;
 	var mCtlbuf = new Array(0x80);
 	for(var i=0; i<0x80; i++) mCtlbuf[i]=0;
 	var mNote_on_event = false;
@@ -99,6 +100,7 @@
 			case 0xA0:
 				break;
 			case 0xB0:
+				mCC_change_event=true;
 				mCtlbuf[event.data[1]]=event.data[2];
 				break;
 			case 0xC0:
@@ -145,14 +147,28 @@
         m_midiout(ch, note, vel);
     };
 
-// PUT CC
+/* -------------------------------------------------------------------------	*/
+// GET CC
+	ext.s_getcc = function() {
+		// Reset alarm_went_off if it is true, and return true
+		// otherwise, return false.
+		if (mCC_change_event === true) {
+			mCC_change_event = false;
+			return true;
+       }
+       return false;
+	};
+
+
+// Set CC Value
 // ccnum: Control Change Number
-	ext.ccin = function(ccnum) {
+	ext.s_ccin = function(ccnum) {
 		return (mCtlbuf[ccnum]);
 	};
 
+/* -------------------------------------------------------------------------	*/
 // GET NOTE ON
-	ext.noteonin = function() {
+	ext.s_getnoteon = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
 		if (mNote_on_event === true) {
@@ -172,12 +188,14 @@
 		return (mNoteVel);
 	};
 
+/* -------------------------------------------------------------------------	*/
 	// Block and block menu descriptions
 	var descriptor = {
 		blocks: [
 			[' ', 'PUT MIDI %n %n %n', 'midiout', 10, 36, 80],
-			['r', 'GET CC %n', 'ccin',30],
-			['h', 'GET NOTE ON', 'noteonin'],
+			['h', 'GET CC', 's_getcc'],
+			['r', 'CC %n', 's_ccin',30],
+			['h', 'GET NOTE ON', 's_getnoteon'],
 			['r', 'NOTE', 's_note'],
 			['r', 'VEL', 's_vel'],
 			['-'],
