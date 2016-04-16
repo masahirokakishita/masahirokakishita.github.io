@@ -35,6 +35,8 @@
 	function success(midiAccess) {
 		m=midiAccess;
 
+		if(inputs.length==0) failure();
+
 		if (typeof m.inputs === "function") {
 			inputs=m.inputs();
 			outputs=m.outputs();
@@ -61,7 +63,7 @@
 	}
 
 	function failure(error) {
-		console.log("MIDI API error");
+		alert( "MIDI API NG\nPlease reload this page.");
 	}
 
 	function m_midiout(ch, note, vel){
