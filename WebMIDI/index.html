@@ -16,6 +16,7 @@
     -->
     </style>
 </HEAD>
+
 <body bgcolor="#defeef" text="#000000" link="#0000ff" vlink="#ff00ff" 
 alink="#ff0000" style="margin-right:30px;margin-left:30px;margin-top:20px;">
 <br>
@@ -54,4 +55,19 @@ There are three blocks in this extension - a "GET CC", "GET NOTE ON" and a "PUT 
 <li>GET NOTE ON
 <li>PUT MIDI
 </ul>
+<hr width="50%" align="left">
+<br>
+<b>GET CC</b></br>
+
+"GET CC" is consisted of a hat block  and a synchronous reporter.  The hat block <img src="JPEG/pcchat.jpg"> informs a MIDI CC data comes. And the synchronous reporter <img src="JPEG/pccparam.jpg"> has one parameter. It's a MIDI control change number. The reporter gets the CC value of the CC number defined by the parameter. <br>
+<br>
+
+<b>GET NOTE ON</b></br>
+"GET NOTE ON" is consisted of a hat block and two synchronous reporters. The hat block informs a MIDI NOTE ON message. NOTE ON message is included two statuses, 0x80 and 0x90. One synchronous reporter indicates the note number and the other indicates the velocity. The case of status 0x80, the velocity is set to zero.
+<br><br>
+
+
 http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fproject.sbx
+
+</body>
+</html>
