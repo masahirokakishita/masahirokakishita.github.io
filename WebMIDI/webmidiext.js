@@ -35,7 +35,7 @@
 	function success(midiAccess) {
 		m=midiAccess;
 
-		if(inputs.length==0) failure();
+		if(m.inputs.size==0) failure();
 
 		if (typeof m.inputs === "function") {
 			inputs=m.inputs();
