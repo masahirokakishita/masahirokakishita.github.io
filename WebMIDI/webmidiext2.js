@@ -178,7 +178,7 @@
 	};
 
 // GET NOTE OFF
-	ext.s_getnoteon = function() {
+	ext.s_getnoteoff = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
 		if (mNote_off_event === true) {
