@@ -85,6 +85,7 @@
 	var mCtlbuf = new Array(0x80);
 	for(var i=0; i<0x80; i++) mCtlbuf[i]=0;
 	var mNote_on_event = false;
+	var mNote_off_event = false;
 	var mNoteNum = 0;
 	var mNoteVel = 0;
 	var mNoteBuf = 0;
@@ -118,17 +119,13 @@
 
 	function m_noteon(note, vel)
 	{
+		mNote_on_event = true;
+		mNoteNum=note;
+		mNoteVel=vel;
+
 		if(vel>0){
-			mNoteBuf=note;
-			mNoteNum=note;
-			mNoteVel=vel;
-			mNote_on_event = true;
 		} else {
-			if(mNoteBuf==note){
-				mNoteVel=0;
-				mNote_on_event = true;
-			} else {
-			}
+			mNote_off_event = true;
 		}
 	}
 
@@ -180,6 +177,18 @@
        return false;
 	};
 
+// GET NOTE OFF
+	ext.s_getnoteon = function() {
+		// Reset alarm_went_off if it is true, and return true
+		// otherwise, return false.
+		if (mNote_off_event === true) {
+			mNote_off_event = false;
+			return true;
+       }
+       return false;
+	};
+
+
 //Set Note Number
 	ext.s_note = function() {
 		return (mNoteNum);
@@ -198,6 +207,7 @@
 			['h', 'GET CC', 's_getcc'],
 			['r', 'CC %n', 's_ccin',30],
 			['h', 'GET NOTE ON', 's_getnoteon'],
+			['h', 'GET NOTE OFF', 's_getnoteoff'],
 			['r', 'NOTE', 's_note'],
 			['r', 'VEL', 's_vel'],
 			['-'],
