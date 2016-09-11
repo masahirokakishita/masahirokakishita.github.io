@@ -230,3 +230,4 @@
     // Register the extension
     ScratchExtensions.register('Web MIDI API extension', descriptor, ext);
 })({});
+
