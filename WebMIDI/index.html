@@ -21,6 +21,7 @@
 alink="#ff0000" style="margin-right:30px;margin-left:30px;margin-top:20px;">
 <br>
 <!--	-------------------------------------------------------------------- -->
+<div id="sans10" align="right">2016.09.11 add "KEY ON"and "KEY OFF" hats</div>
 <center><h2>Web MIDI API Extension for ScratchX</h2></center>
 <!--	-------------------------------------------------------------------- -->
 <div id="sans14">
@@ -48,12 +49,14 @@ Before you try to use these extensions, you should connect a MIDI device to your
 After you connect a MIDI device, you launch Chrome browser. 
 Because Chrome browser finds the MIDI device when it launches.
 <br><br>
-There are three blocks in this extension - a "GET CC", "GET NOTE ON" and a "PUT MIDI" block. 
+There are five blocks in this extension - a "GET CC", "GET NOTE ON", "PUT MIDI", <b>"KEY ON"</b> and <b>"KEY OFF"</b> block. 
 <br>
 <ul>
 <li>GET CC
 <li>GET NOTE ON
 <li>PUT MIDI
+<li>KEY ON
+<li>KEY OFF
 </ul>
 
 <hr width="50%" align="left"><br>
@@ -70,11 +73,19 @@ http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fwebmidiext.js
 <br>
 
 <b>GET NOTE ON</b></br>
-"GET NOTE ON" is consisted of a hat block and two synchronous reporters. The hat block informs a MIDI NOTE ON message. NOTE ON message is included two statuses, 0x80 and 0x90. One synchronous reporter indicates the note number and the other indicates the velocity. The case of status 0x80, the velocity is set to zero.
+"GET NOTE ON" <img src="JPEG/getnote.jpg"> is consisted of a hat block and two synchronous reporters. The hat block informs a MIDI NOTE ON message. NOTE ON message is included two statuses, 0x80 and 0x90. One synchronous reporter indicates the note number and the other indicates the velocity. The case of status 0x80, the velocity is set to zero.
 <br><br>
 
 <b>PUT MIDI</b></br>
 "PUT MIDI" <img src="JPEG/pcmidiout.jpg"> genarates a MIDI NOTE ON message. The first parameter is a channel number, the second one is a note number and last one is a velocity. Normary the velocity is zero means note off.
+<br><br>
+
+<b>KEY ON</b></br>
+"KEY ON" <img src="JPEG/keyon.jpg"> is a hat block that indicates when a keyboad is pushed.
+<br><br>
+
+<b>KEY OFF</b></br>
+"KEY OFF" <img src="JPEG/keyoff.jpg"> is a hat block that indicates when a keyboad is released.
 <br><br>
 
 <hr width="50%" align="left">
@@ -85,6 +96,8 @@ http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fwebmidiext.js
 <br><br>
 In this movie's case, when a key on the keyboard is hit a small rocket moves to a position defined by key number and velocity.
 <br><br>
+
+<!-- ---------------------------------------------------------------------	-->
 <hr width="50%" align="left">
 <br>
 <b>Example 1</b></br>
@@ -92,5 +105,31 @@ This example is for separationg Note Off from Note On. Note Off can be found by 
 <img src="JPEG/example1.jpg"><br>
 <a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fnodeonoff.sbx" TARGET="_blank">The Example is here.</a><br>
 <br><br>
+
+<!-- ---------------------------------------------------------------------	-->
+<hr width="50%" align="left">
+<br>
+<b>Example 2</b></br>
+This Example is using "KEY ON" and "KEY OFF" hats.<br>
+<br>
+<img src="JPEG/example2.jpg"><br>
+<br>
+<a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fkeyonoffhat.sbx" TARGET="_blank">The Example is here.</a><br>
+<br><br>
+
+
 </body>
+
+<!--- -----------------------------------------------------------------------------	-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66117399-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
 </html>
