@@ -1,5 +1,148 @@
+﻿<!DOCTYPE html>
 <html>
-<body>
-<h2>Hello! world</h2>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Script-Type" content="text/javascript">
+	<title>HSD</title>
+
+  <style type="text/css">
+    <!--
+    #sans { color: black; font-family:sans-serif ;  font-size: 10pt; line-height : 1.5em}
+    #mono { color: black; font-family:monospace ; font-size: 10pt; line-height : 1.5em}
+    #log { }
+    -->
+    </style>
+
+
+<script>
+{
+	var audioContext = new AudioContext();
+	var audiosource;
+	var splitter = audioContext.createChannelSplitter(2);
+	var merger = audioContext.createChannelMerger(2);
+	var node = audioContext.createScriptProcessor(1024, 2, 2);
+
+	// Gain Node for both channel
+ 	var gainL = audioContext.createGain();
+	var gainR = audioContext.createGain();
+	gainL.gain.value = 1.0;
+	gainR.gain.value = 1.0;
+
+	navigator.getUserMedia = ( navigator.getUserMedia ||
+		navigator.webkitGetUserMedia ||
+		navigator.mozGetUserMedia ||
+		navigator.msGetUserMedia);
+
+	function soundThrough() {
+		navigator.getUserMedia({video: false, audio: true},
+			function(stream){
+				audiosource = audioContext.createMediaStreamSource(stream);
+				audiosource.connect(node);
+				node.connect(splitter);
+				splitter.connect(gainL, 0);
+				splitter.connect(gainR, 1);
+				gainL.connect(merger, 0, 0)
+				gainR.connect(merger, 0, 1)
+				merger.connect(audioContext.destination);
+			},
+			function(e) {	// I can't use getUserMedia
+				console.log(e);
+			}
+		);
+	}
+}
+</script>
+
+
+<hr>
+</HEAD>
+
+<body onload="soundThrough();" bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#ff00ff" alink="#ff0000" style="margin-right:28px;margin-left:28px;margin-top:20px;">
+<br>
+<center><h2>HSD TRYAL<h2></center>
+
+<!--	-------------------------------------------------------------------- -->
+<canvas id="waveshape" width="1048" height="224">
+</canvas>
+
+<pre id="log">
+</pre>
+
+<!--	------------------------------------------------------------------ -->
+<script>
+{
+	var ixb = 12;	//描画X軸の基点
+	var iyb = 12;	//描画Y軸の基点
+	var ixw = 1024;	//描画のX軸のサイズ
+	var iyw = 200;	//描画のX軸のサイズ
+
+	/* 描画領域の初期化 */
+	var canvas = document.getElementById('waveshape');
+	var waveshape = canvas.getContext('2d');
+    waveshape.strokeRect(ixb,iyb,ixw,iyw);
+
+	/* Audio Buffer が一杯になったらこの関数が呼ばれる */
+	function process(data){
+		var procsize = data.inputBuffer.length;
+		/* L-ch を描画する */
+		var inbufL = data.inputBuffer.getChannelData(0);
+		var inbufR = data.inputBuffer.getChannelData(1);
+		var outbufL = data.outputBuffer.getChannelData(0);
+		var outbufR = data.outputBuffer.getChannelData(1);
+
+		waveshape.beginPath();
+		var ix=iy=0;
+
+		/* 描画領域のクリア */
+	    waveshape.clearRect(ixb,iyb,ixw,iyw);
+
+		/* 波形の表示 */
+		waveshape.strokeStyle ="#000000";
+		waveshape.moveTo(ixb, iyb+iyw/2);
+		for(var i=0;i<procsize; i+=8){
+			iy=Math.floor(inbufL[i]*100+iyw/2+iyb);
+			if(iy >= iyw+iyb ) iy=iyw+iyb;
+			else if(iy<=iyb ) iy=iyb;
+
+			ix=Math.floor(i+ixb);
+			waveshape.lineTo(ix, iy);
+		}
+		waveshape.stroke();
+
+		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
+	}
+
+	//データ処理関数の定義
+	node.onaudioprocess=process;
+
+	/* LOG領域の初期化 */
+	var log = document.getElementById("log");
+	var sampleRate = audioContext.sampleRate;
+
+	log.innerText +="sample rate:"
+	log.innerText += sampleRate;
+	log.innerText +="\n";
+
+	function leftGainChange(value){
+		log.innerText +="left gain:"
+		log.innerText +=value;
+		log.innerText +="\n";
+		gainL.gain.value = value;
+	}
+	function RightGainChange(value){
+		log.innerText +="right gain:"
+		log.innerText +=value;
+		log.innerText +="\n";
+		gainR.gain.value = value;
+	}
+}
+</script>
+
+<form method="volume">
+LEFT &nbsp;&nbsp;GAIN: <input type="number" name="left"  step="0.1" min="0.0" max="1.0" value="1.0" onchange="leftGainChange(this.value);"><br>
+RIGHT GAIN: <input type="number" name="right" step="0.1" min="0.0" max="1.0" value="1.0" onchange="RightGainChange(this.value);">
+</form>
+
 </body>
 </html>
+
