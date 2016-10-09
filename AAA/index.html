@@ -105,13 +105,20 @@
 		var outbufR = data.outputBuffer.getChannelData(1);
 		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 	}
+
+	var inbufL = null;
+	var inbufR = null;
+	var outbufL = null;
+	var outbufR = null;
+
 	function process(data){
 		var procsize = data.inputBuffer.length;
 		/* L-ch を描画する */
-		var inbufL = data.inputBuffer.getChannelData(0);
-		var inbufR = data.inputBuffer.getChannelData(1);
-		var outbufL = data.outputBuffer.getChannelData(0);
-		var outbufR = data.outputBuffer.getChannelData(1);
+		inbufL = data.inputBuffer.getChannelData(0);
+		inbufR = data.inputBuffer.getChannelData(1);
+		outbufL = data.outputBuffer.getChannelData(0);
+		outbufR = data.outputBuffer.getChannelData(1);
+
 		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 
 		if(drf){
