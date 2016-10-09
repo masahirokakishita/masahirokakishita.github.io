@@ -96,7 +96,7 @@
     waveshape.strokeRect(ixb,iyb,ixw,iyw);
 
 	/* Audio Buffer が一杯になったらこの関数が呼ばれる */
-	function process(data){
+	function process2(data){
 		var procsize = data.inputBuffer.length;
 		/* L-ch を描画する */
 		var inbufL = data.inputBuffer.getChannelData(0);
@@ -105,7 +105,7 @@
 		var outbufR = data.outputBuffer.getChannelData(1);
 		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 	}
-	function process2(data){
+	function process(data){
 		var procsize = data.inputBuffer.length;
 		/* L-ch を描画する */
 		var inbufL = data.inputBuffer.getChannelData(0);
@@ -114,27 +114,24 @@
 		var outbufR = data.outputBuffer.getChannelData(1);
 
 		if(drf){
-			if(ncnt==0){
-				ncnt=16;
-				waveshape.beginPath();
-				var ix=iy=0;
+			waveshape.beginPath();
+			var ix=iy=0;
 
-				/* 描画領域のクリア */
-				waveshape.clearRect(ixb,iyb,ixw,iyw);
+			/* 描画領域のクリア */
+			waveshape.clearRect(ixb,iyb,ixw,iyw);
 
-				/* 波形の表示 */
-				waveshape.strokeStyle ="#000000";
-				waveshape.moveTo(ixb, iyb+iyw/2);
-				for(var i=0;i<procsize; i+=8){
-					iy=Math.floor(inbufL[i]*100+iyw/2+iyb);
-					if(iy >= iyw+iyb ) iy=iyw+iyb;
-					else if(iy<=iyb ) iy=iyb;
+			/* 波形の表示 */
+			waveshape.strokeStyle ="#000000";
+			waveshape.moveTo(ixb, iyb+iyw/2);
+			for(var i=0;i<procsize; i+=8){
+				iy=Math.floor(inbufL[i]*100+iyw/2+iyb);
+				if(iy >= iyw+iyb ) iy=iyw+iyb;
+				else if(iy<=iyb ) iy=iyb;
 
-					ix=Math.floor(i+ixb);
-					waveshape.lineTo(ix, iy);
-				}
-				waveshape.stroke();
-				} else ncnt--;
+				ix=Math.floor(i+ixb);
+				waveshape.lineTo(ix, iy);
+			}
+			waveshape.stroke();
 		} else {
 
 			fdg1.fClearWindowInside();
