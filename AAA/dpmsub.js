@@ -1,28 +1,32 @@
-{ 
+ï»¿{ 
 	var dtemp1, dtemp2, dtemp3; 
 
- 	var mStrA=null;		// “ü—Í•¶š—ñ‚` 
- 	var mStrB=null;		// “ü—Í•¶š—ñ‚a 
+ 	var mStrA=null;		// å…¥åŠ›æ–‡å­—åˆ—ï¼¡ 
+ 	var mStrB=null;		// å…¥åŠ›æ–‡å­—åˆ—ï¼¢ 
 
-	var mZurePenalty = 1;	// ‚P•¶š‚¸‚ê‚½‚±‚Æ‚Ö‚Ìƒyƒiƒ‹ƒeƒB 
-	var mAwazuPenalty = 5;	// ‚P•¶š•sˆê’v‚Ö‚Ìƒyƒiƒ‹ƒeƒB 
+	var mZurePenalty = 1;	// ï¼‘æ–‡å­—ãšã‚ŒãŸã“ã¨ã¸ã®ãƒšãƒŠãƒ«ãƒ†ã‚£ 
+	var mAwazuPenalty = 5;	// ï¼‘æ–‡å­—ä¸ä¸€è‡´ã¸ã®ãƒšãƒŠãƒ«ãƒ†ã‚£ 
   
-	var mDistance = 0; // ‚Q‚Â‚Ì•¶š—ñ‚Ì•sˆê’v“x 
+	var mDistance = 0; // ï¼’ã¤ã®æ–‡å­—åˆ—ã®ä¸ä¸€è‡´åº¦ 
   
-	var mLengthA=0;	//‚`‚Ì’·‚³ 
-	var mLengthB=0;	//‚a‚Ì’·‚³ 
+	var mLengthA=0;	//ï¼¡ã®é•·ã• 
+	var mLengthB=0;	//ï¼¢ã®é•·ã• 
 
-	var mMissMatch=null;	//ˆê’vŒ‹‰Êƒoƒbƒtƒ@
-	var mCost=null;		//ŠeŒo˜H“_‚Ì“’BƒRƒXƒg 
-    var mFrom=null;		//Å’ZŒo˜H‚Í‚Ç‚±‚©‚ç—ˆ‚½‚© 0:Î‚ßA1:‚‰‘‚¦,‚QF‚Š‘‚¦ 
+	var mMissMatch=null;	//ä¸€è‡´çµæœãƒãƒƒãƒ•ã‚¡
+	var mCost=null;		//å„çµŒè·¯ç‚¹ã®åˆ°é”ã‚³ã‚¹ãƒˆ 
+    var mFrom=null;		//æœ€çŸ­çµŒè·¯ã¯ã©ã“ã‹ã‚‰æ¥ãŸã‹ 0:æ–œã‚ã€1:ï½‰å¢—ãˆ,ï¼’ï¼šï½Šå¢—ãˆ 
 
 	var mResultA=null; 
 	var mResultB=null; 
 	var mLenAB=null; 
+	var mMaxValue=null;
 
 
 function setString( cStrA, cStrB )
 {
+	if(cStrA.length==0) return;
+	if(cStrB.length==0) return;
+
 	mStrA = cStrA;
 	mStrB = cStrB;
 
@@ -39,9 +43,11 @@ function setString( cStrA, cStrB )
 		mFrom[i] = new Array(mLengthB);
 	}
 
-	//ƒ}ƒbƒ`ƒ“ƒOŒ‹‰Ê 
+	//ãƒãƒƒãƒãƒ³ã‚°çµæœ 
 	mResultA = new Array(mLengthA+mLengthB+1);
 	mResultB = new Array(mLengthA+mLengthB+1);
+
+	mMaxValue = Math.max(mLengthA, mLengthB)*10 + Math.abs(mLengthA, mLengthB);
 
 	console.log(mStrA[1]);
  	console.log(mLengthA);
@@ -49,7 +55,10 @@ function setString( cStrA, cStrB )
 
 function dpmCalc()
 {
-	/////////////// ‘“–‚½‚è‚Åˆê’v‚ÌŠm”F 
+	if(mLengthA==0) return;
+	if(mLengthB==0) return;
+
+	/////////////// ç·å½“ãŸã‚Šã§ä¸€è‡´ã®ç¢ºèª 
 	for(var i = 0; i < mLengthA; i++) { 
 		log.innerHTML += "<br>";
 		log.innerHTML += i+1;
@@ -67,27 +76,27 @@ function dpmCalc()
 	log.innerHTML += "<br>";
 	log.innerHTML += "<br>";
 
-	//////////@ƒRƒXƒgŒvZ 
+	//////////ã€€ã‚³ã‚¹ãƒˆè¨ˆç®— 
 	mCost[0][0] = mMissMatch[0][0] * mAwazuPenalty;
 	mFrom[0][0] = 0; 
 
-	//// i‘¤‚Ì‰ 
+	//// iå´ã®ç¸ 
 	for(var i = 1; i < mLengthA; i++) { 
 		mCost[i][0] = mCost[i-1][0] + mZurePenalty + mMissMatch[i][0] * mAwazuPenalty; 
 		mFrom[i][0] = 1; 
 	} 
-	//// ‚Š‘¤‚Ì‰ 
+	//// ï½Šå´ã®ç¸ 
 	for(var j = 1; j < mLengthB; j++) { 
 		mCost[0][j] = mCost[0][j-1] + mZurePenalty + mMissMatch[0][j] * mAwazuPenalty; 
 		mFrom[0][j] = 2; 
 	} 
 
-	//// ’†ŠÔ•” 
+	//// ä¸­é–“éƒ¨ 
 	for(var i = 1; i < mLengthA; i++) { 
 		for(var j = 1; j < mLengthB; j++) { 
-			dtemp1 = mCost[i-1][j-1] + mMissMatch[i][j] * mAwazuPenalty; //Î‚ß‚Å—ˆ‚½ê‡‚ÌƒRƒXƒg 
-			dtemp2 = mCost[i-1][j  ] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //i‘‚¦‚Å—ˆ‚½ê‡‚ÌƒRƒXƒg 
-			dtemp3 = mCost[i  ][j-1] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //j‘‚¦‚Å—ˆ‚½ê‡‚ÌƒRƒXƒg 
+			dtemp1 = mCost[i-1][j-1] + mMissMatch[i][j] * mAwazuPenalty; //æ–œã‚ã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+			dtemp2 = mCost[i-1][j  ] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //iå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+			dtemp3 = mCost[i  ][j-1] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //jå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
 
 			if(dtemp1 <= dtemp2 && dtemp1 <= dtemp3) { 
 				mCost[i][j] = dtemp1; mFrom[i][j] = 0; 
@@ -101,10 +110,10 @@ function dpmCalc()
 		} 
 	} 
 
-	///DPƒ}ƒbƒ`ƒ“ƒO‚Ì•sˆê’v“x‚Í‚±‚êBˆÈ~‚ÍŒ‹‰ÊŠÏ@‚Ì‚½‚ß‚Ì®Œ`è‘±‚«‚Å‚· 
+	///DPãƒãƒƒãƒãƒ³ã‚°ã®ä¸ä¸€è‡´åº¦ã¯ã“ã‚Œã€‚ä»¥é™ã¯çµæœè¦³å¯Ÿã®ãŸã‚ã®æ•´å½¢æ‰‹ç¶šãã§ã™ 
 	mDistance = mCost[mLengthA -1][mLengthB-1];	
   
-	//////ƒS[ƒ‹‚©‚çƒXƒ^[ƒg‚Ö‹t‚É’H‚é 
+	//////ã‚´ãƒ¼ãƒ«ã‹ã‚‰ã‚¹ã‚¿ãƒ¼ãƒˆã¸é€†ã«è¾¿ã‚‹ 
     mLenAB = mLengthA + mLengthB; 
 
 	{
@@ -133,7 +142,7 @@ function dpmCalc()
 				} 
 		} 
 
-		mLenAB -= k; //ƒ}ƒbƒ`Œ‹‰Ê‚Ì•¶š—ñ‚Ì’·‚³ 
+		mLenAB -= k; //ãƒãƒƒãƒçµæœã®æ–‡å­—åˆ—ã®é•·ã• 
 
 		for(var i = 0; i < mLenAB; i++) { 
 			mResultA[i] = mResultA[i+k+1]; 
@@ -177,23 +186,167 @@ function dpmCalc()
 	log.innerHTML +=mResultB; 
 }
 
-setString("ksakkdhjsklfhdjs", "abdc");
+
+function dpmCalc2()
+{
+	if(mLengthA==0) return;
+	if(mLengthB==0) return;
+
+	mAwazuPenalty = 10;	// ï¼‘æ–‡å­—ä¸ä¸€è‡´ã¸ã®ãƒšãƒŠãƒ«ãƒ†ã‚£  
+	var mm=0;
+
+//	for(var i=0; i<mLengthB; i++) mStrB[i]=0;
+
+	/////////////// ç·å½“ãŸã‚Šã§ä¸€è‡´ã®ç¢ºèª 
+	for(var i = 0; i < mLengthA; i++) { 
+		for(var j = 0; j < mLengthB; j++) { 
+			if(mStrA[i]-20<=mStrB[j] && mStrB[j]<=mStrA[i]+20) { 
+				mMissMatch[i][j] = 0;
+				mm++;
+			} else if(mStrA[i]-40<=mStrB[j] && mStrB[j]<=mStrA[i]+40) { 
+				mMissMatch[i][j] = 0.2;
+				mm+=0.5;
+			} else if(mStrA[i]-80<=mStrB[j] && mStrB[j]<=mStrA[i]+80) { 
+				mMissMatch[i][j] = 0.4;
+				mm+=0.25;
+			} else { 
+				mMissMatch[i][j] = 1; 
+			} 
+		} 
+	} 
+
+//	if(mm<mLengthA/2) return 1000;
+
+	//////////ã€€ã‚³ã‚¹ãƒˆè¨ˆç®— 
+	mCost[0][0] = mMissMatch[0][0] * mAwazuPenalty;
+	mFrom[0][0] = 0; 
+
+	//// iå´ã®ç¸ 
+	for(var i = 1; i < mLengthA; i++) { 
+		mCost[i][0] = mCost[i-1][0] + mZurePenalty + mMissMatch[i][0] * mAwazuPenalty; 
+		mFrom[i][0] = 1; 
+	} 
+	//// ï½Šå´ã®ç¸ 
+	for(var j = 1; j < mLengthB; j++) { 
+		mCost[0][j] = mCost[0][j-1] + mZurePenalty + mMissMatch[0][j] * mAwazuPenalty; 
+		mFrom[0][j] = 2; 
+	} 
+
+	//// ä¸­é–“éƒ¨ 
+	for(var i = 1; i < mLengthA; i++) { 
+		for(var j = 1; j < mLengthB; j++) { 
+			dtemp1 = mCost[i-1][j-1] + mMissMatch[i][j] * mAwazuPenalty; //æ–œã‚ã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+			dtemp2 = mCost[i-1][j  ] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //iå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+			dtemp3 = mCost[i  ][j-1] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //jå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+
+			if(dtemp1 <= dtemp2 && dtemp1 <= dtemp3) { 
+				mCost[i][j] = dtemp1; mFrom[i][j] = 0; 
+			} 
+			else if(dtemp2 <= dtemp3) { 
+				mCost[i][j] = dtemp2; mFrom[i][j] = 1; 
+			} 
+			else { 
+				mCost[i][j] = dtemp3; mFrom[i][j] = 2; 
+			} 
+		} 
+	} 
+
+	///DPãƒãƒƒãƒãƒ³ã‚°ã®ä¸ä¸€è‡´åº¦ã¯ã“ã‚Œã€‚ä»¥é™ã¯çµæœè¦³å¯Ÿã®ãŸã‚ã®æ•´å½¢æ‰‹ç¶šãã§ã™ 
+	mDistance = mCost[mLengthA -1][mLengthB-1];	
+ 
+	log.innerText = "Difference = "; 
+	log.innerText += mm; 
+	log.innerText += " "; 
+	log.innerText += mDistance; 
+	log.innerText += "\n";
+
+	return mDistance;
+}
+
+
+function dpmCalc3()
+{
+	if(mLengthA==0) return;
+	if(mLengthB==0) return;
+
+	mAwazuPenalty = 10;	// ï¼‘æ–‡å­—ä¸ä¸€è‡´ã¸ã®ãƒšãƒŠãƒ«ãƒ†ã‚£  
+	var mm=0;
+
+	/////////////// ç·å½“ãŸã‚Šã§ä¸€è‡´ã®ç¢ºèª 
+	for(var i = 0; i < mLengthA; i++) { 
+		for(var j = 0; j < mLengthB; j++) { 
+			if(mStrA[i]-4<=mStrB[j] && mStrB[j]<=mStrA[i]+4) { 
+				mMissMatch[i][j] = 0;
+				mm++;
+			} else { 
+				mMissMatch[i][j] = 1; 
+			} 
+		} 
+	} 
+
+	//////////ã€€ã‚³ã‚¹ãƒˆè¨ˆç®— 
+	mCost[0][0] = mMissMatch[0][0] * mAwazuPenalty;
+	mFrom[0][0] = 0; 
+
+	//// iå´ã®ç¸ 
+	for(var i = 1; i < mLengthA; i++) { 
+		mCost[i][0] = mCost[i-1][0] + mZurePenalty + mMissMatch[i][0] * mAwazuPenalty; 
+		mFrom[i][0] = 1; 
+	} 
+	//// ï½Šå´ã®ç¸ 
+	for(var j = 1; j < mLengthB; j++) { 
+		mCost[0][j] = mCost[0][j-1] + mZurePenalty + mMissMatch[0][j] * mAwazuPenalty; 
+		mFrom[0][j] = 2; 
+	} 
+
+	//// ä¸­é–“éƒ¨ 
+	for(var i = 1; i < mLengthA; i++) { 
+		for(var j = 1; j < mLengthB; j++) { 
+			dtemp1 = mCost[i-1][j-1] + mMissMatch[i][j] * mAwazuPenalty; //æ–œã‚ã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+			dtemp2 = mCost[i-1][j  ] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //iå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+			dtemp3 = mCost[i  ][j-1] + mMissMatch[i][j] * mAwazuPenalty + mZurePenalty; //jå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+
+			if(dtemp1 <= dtemp2 && dtemp1 <= dtemp3) { 
+				mCost[i][j] = dtemp1; mFrom[i][j] = 0; 
+			} 
+			else if(dtemp2 <= dtemp3) { 
+				mCost[i][j] = dtemp2; mFrom[i][j] = 1; 
+			} 
+			else { 
+				mCost[i][j] = dtemp3; mFrom[i][j] = 2; 
+			} 
+		} 
+	} 
+
+	///DPãƒãƒƒãƒãƒ³ã‚°ã®ä¸ä¸€è‡´åº¦ã¯ã“ã‚Œã€‚ä»¥é™ã¯çµæœè¦³å¯Ÿã®ãŸã‚ã®æ•´å½¢æ‰‹ç¶šãã§ã™ 
+	mDistance = mCost[mLengthA -1][mLengthB-1];	
+ 
+	log.innerText += " "; 
+	log.innerText += mm; 
+	log.innerText += " "; 
+	log.innerText += mDistance; 
+	log.innerText += "\n";
+
+	return mDistance;
+}
+
+// setString("abdc", "ksakkdhjsklfhdjs" );
 
 /*
-              int MissMatch[64][64]; //ˆê’vŒ‹‰Êƒoƒbƒtƒ@ 
-              double Cost[64][64]; //ŠeŒo˜H“_‚Ì“’BƒRƒXƒg 
-              int From[64][64]; //Å’ZŒo˜H‚Í‚Ç‚±‚©‚ç—ˆ‚½‚© 0:Î‚ßA1:‚‰‘‚¦,‚QF‚Š‘‚¦ 
+              int MissMatch[64][64]; //ä¸€è‡´çµæœãƒãƒƒãƒ•ã‚¡ 
+              double Cost[64][64]; //å„çµŒè·¯ç‚¹ã®åˆ°é”ã‚³ã‚¹ãƒˆ 
+              int From[64][64]; //æœ€çŸ­çµŒè·¯ã¯ã©ã“ã‹ã‚‰æ¥ãŸã‹ 0:æ–œã‚ã€1:ï½‰å¢—ãˆ,ï¼’ï¼šï½Šå¢—ãˆ 
               double dtemp1, dtemp2, dtemp3; 
   
-              //ƒ}ƒbƒ`ƒ“ƒOŒ‹‰Ê 
+              //ãƒãƒƒãƒãƒ³ã‚°çµæœ 
               char ResultA[128]; 
               char ResultB[128]; 
               long LenAB; 
   
               printf("\n ============== DP Matching ================\n\n"); 
               printf("Input String A >> "); 
-			scanf("%s",StrA); //scanf‚ÍƒXƒy[ƒX‚Å“Ç‚İ‚İ‚ğ‘Å‚¿Ø‚é‚Ì‚Å’ˆÓB 
-             //C++Œn‚ÌŠÖ” (getline(cin, StrA); ‚È‚Ç)‚ğ—p‚¢‚½•û‚ª‰½‚©‚ÆˆÀ‘S‚Å‚ ‚éB 
+			scanf("%s",StrA); //scanfã¯ã‚¹ãƒšãƒ¼ã‚¹ã§èª­ã¿è¾¼ã¿ã‚’æ‰“ã¡åˆ‡ã‚‹ã®ã§æ³¨æ„ã€‚ 
+             //C++ç³»ã®é–¢æ•° (getline(cin, StrA); ãªã©)ã‚’ç”¨ã„ãŸæ–¹ãŒä½•ã‹ã¨å®‰å…¨ã§ã‚ã‚‹ã€‚ 
   
               printf("Input String B >> "); 
               scanf("%s",StrB); 
@@ -202,7 +355,7 @@ setString("ksakkdhjsklfhdjs", "abdc");
               LengthB = strlen(StrB); 
   
               
-              /////////////// ‘“–‚½‚è‚Åˆê’v‚ÌŠm”F 
+              /////////////// ç·å½“ãŸã‚Šã§ä¸€è‡´ã®ç¢ºèª 
               for(i = 0; i < LengthA; i++) { 
                             printf("\n%3d: ",i+1); 
   
@@ -219,27 +372,27 @@ setString("ksakkdhjsklfhdjs", "abdc");
               } 
               printf("\n"); 
   
-              //////////@ƒRƒXƒgŒvZ 
+              //////////ã€€ã‚³ã‚¹ãƒˆè¨ˆç®— 
               Cost[0][0] = MissMatch[0][0] * AwazuPenalty; 
               From[0][0] = 0; 
   
-              //// i‘¤‚Ì‰ 
+              //// iå´ã®ç¸ 
               for(i = 1; i < LengthA; i++) { 
                             Cost[i][0] = Cost[i-1][0] + ZurePenalty + MissMatch[i][0] * AwazuPenalty; 
                             From[i][0] = 1; 
               } 
-              //// ‚Š‘¤‚Ì‰ 
+              //// ï½Šå´ã®ç¸ 
               for(j = 1; j < LengthB; j++) { 
                             Cost[0][j] = Cost[0][j-1] + ZurePenalty + MissMatch[0][j] * AwazuPenalty; 
                             From[0][j] = 2; 
               } 
   
-              //// ’†ŠÔ•” 
+              //// ä¸­é–“éƒ¨ 
               for(i = 1; i < LengthA; i++) { 
                             for(j = 1; j < LengthB; j++) { 
-                                          dtemp1 = Cost[i-1][j-1] + MissMatch[i][j] * AwazuPenalty; //Î‚ß‚Å—ˆ‚½ê‡‚ÌƒRƒXƒg 
-                                          dtemp2 = Cost[i-1][j  ] + MissMatch[i][j] * AwazuPenalty + ZurePenalty; //i‘‚¦‚Å—ˆ‚½ê‡‚ÌƒRƒXƒg 
-                                          dtemp3 = Cost[i  ][j-1] + MissMatch[i][j] * AwazuPenalty + ZurePenalty; //j‘‚¦‚Å—ˆ‚½ê‡‚ÌƒRƒXƒg 
+                                          dtemp1 = Cost[i-1][j-1] + MissMatch[i][j] * AwazuPenalty; //æ–œã‚ã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+                                          dtemp2 = Cost[i-1][j  ] + MissMatch[i][j] * AwazuPenalty + ZurePenalty; //iå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
+                                          dtemp3 = Cost[i  ][j-1] + MissMatch[i][j] * AwazuPenalty + ZurePenalty; //jå¢—ãˆã§æ¥ãŸå ´åˆã®ã‚³ã‚¹ãƒˆ 
   
                                           if(dtemp1 <= dtemp2 && dtemp1 <= dtemp3) { 
                                                         Cost[i][j] = dtemp1; 
@@ -256,9 +409,9 @@ setString("ksakkdhjsklfhdjs", "abdc");
                             } 
               } 
   
-              Distance = Cost[LengthA -1][LengthB-1];///DPƒ}ƒbƒ`ƒ“ƒO‚Ì•sˆê’v“x‚Í‚±‚êBˆÈ~‚ÍŒ‹‰ÊŠÏ@‚Ì‚½‚ß‚Ì®Œ`è‘±‚«‚Å‚· 
+              Distance = Cost[LengthA -1][LengthB-1];///DPãƒãƒƒãƒãƒ³ã‚°ã®ä¸ä¸€è‡´åº¦ã¯ã“ã‚Œã€‚ä»¥é™ã¯çµæœè¦³å¯Ÿã®ãŸã‚ã®æ•´å½¢æ‰‹ç¶šãã§ã™ 
   
-              //////ƒS[ƒ‹‚©‚çƒXƒ^[ƒg‚Ö‹t‚É’H‚é 
+              //////ã‚´ãƒ¼ãƒ«ã‹ã‚‰ã‚¹ã‚¿ãƒ¼ãƒˆã¸é€†ã«è¾¿ã‚‹ 
               LenAB = LengthA + LengthB; 
               i = LengthA -1; 
               j = LengthB -1; 
@@ -286,7 +439,7 @@ setString("ksakkdhjsklfhdjs", "abdc");
                             } 
   
               } 
-              LenAB -= k; //ƒ}ƒbƒ`Œ‹‰Ê‚Ì•¶š—ñ‚Ì’·‚³ 
+              LenAB -= k; //ãƒãƒƒãƒçµæœã®æ–‡å­—åˆ—ã®é•·ã• 
   
               for(i = 0; i < LenAB; i++) { 
                             ResultA[i] = ResultA[i+k+1]; 
