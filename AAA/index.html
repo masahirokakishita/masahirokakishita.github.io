@@ -123,7 +123,6 @@
 
 		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 
-<<<<<<< HEAD
 			fdg1.fClearWindowInside();
 			for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
 
@@ -140,7 +139,7 @@
 				if(pw<=0) mPower[i]=0.;
 				else mPower[i]=10.*Math.log(pw)/Math.log(10.);
 				pavr+=mPower[i];
-=======
+
 		if(drf){
 			waveshape.beginPath();
 			var ix=iy=0;
@@ -158,7 +157,6 @@
 
 				ix=Math.floor(i+ixb);
 				waveshape.lineTo(ix, iy);
->>>>>>> origin/master
 			}
 			waveshape.stroke();
 
