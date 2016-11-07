@@ -98,7 +98,7 @@
     waveshape.strokeRect(ixb,iyb,ixw,iyw);
 
 	/* Audio Buffer が一杯になったらこの関数が呼ばれる */
-	function process(data){
+	function process2(data){
 		var procsize = data.inputBuffer.length;
 		/* L-ch を描画する */
 		var inbufL = data.inputBuffer.getChannelData(0);
@@ -107,7 +107,8 @@
 		var outbufR = data.outputBuffer.getChannelData(1);
 		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 	}
-	function process2(data){
+
+	function process(data){
 		var procsize = data.inputBuffer.length;
 		/* L-ch を描画する */
 		var inbufL = data.inputBuffer.getChannelData(0);
