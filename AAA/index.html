@@ -128,29 +128,47 @@
 			mData[iwpoint++]=outbufL[i];
 		}
 		iwpoint%=(WINDOW_SIZE*4);
-
-		fdg1.fClearWindowInside();
-		for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
-
-		//スレショルドを超えたらFFTする。
-		for(i=0; i<WINDOW_SIZE; i++){
-			mReal[i]=inbufL[i]*16;
+		var irpoint=iwpoint;
+		var flag=0;
+		for(i=128; i<WINDOW_SIZE*3; i++,irpoint++){ 
+			irpoint%=(WINDOW_SIZE*4);
+			if(flag==0 && mData[i]>0.5){
+				flag=1; break;
+			}
+		}
+		if(flag){
+			irpoint-=128;
+			irpoint%=(WINDOW_SIZE*4);
+			for(i=0; i<WINDOW_SIZE; i++,irpoint++){ 
+				irpoint%=(WINDOW_SIZE*4);
+				mDataH[i]=mData[irpoint];
+			}
 		}
 
-		transform(mReal, mImage);
+		if( flag ){
+			fdg1.fClearWindowInside();
+			for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
 
-		var pavr=0;
-		for(i=1; i<WINDOW_HSIZE; i++){
-			pw = mReal[i]*mReal[i]+mImage[i]*mImage[i];
-			if(pw<=0) mPower[i]=0.;
-			else mPower[i]=10.*Math.log(pw)/Math.log(10.);
-			pavr+=mPower[i];
+			//スレショルドを超えたらFFTする。
+			for(i=0; i<WINDOW_SIZE; i++){
+				mReal[i]=mDataH[i]*16;
+			}
+
+			transform(mReal, mImage);
+
+			var pavr=0;
+			for(i=1; i<WINDOW_HSIZE; i++){
+				pw = mReal[i]*mReal[i]+mImage[i]*mImage[i];
+				if(pw<=0) mPower[i]=0.;
+				else mPower[i]=10.*Math.log(pw)/Math.log(10.);
+				pavr+=mPower[i];
+			}
 		}
 
 		if(drf){
 			waveshape.beginPath();
 			var ix=iy=0;
-			wavedraw(inbufL,procsize);
+			wavedraw(mDataH,procsize);
 			wavfft();
 		} else {
 
@@ -207,7 +225,7 @@ function recref1()
 		fdg1.fClearWindowInside();
 		for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
 		for(i=0; i<WINDOW_SIZE; i++){
-			mReal[i]=mWin[i]*inbufL[i]*16;
+			mReal[i]=mWin[i]*mDataH[i]*16;
 		}
 		transform(mReal, mImage);
 
@@ -270,6 +288,8 @@ function recref1()
 
 	var mReal=new Array(WINDOW_SIZE);
 	var mData=new Array(WINDOW_SIZE*4);
+	var mDataH=new Array(WINDOW_SIZE);
+
 	var mImage=new Array(WINDOW_SIZE);
 	var mWin=new Array(WINDOW_SIZE);
 	var mPower=new Array(WINDOW_HSIZE);
