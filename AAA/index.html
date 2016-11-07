@@ -122,25 +122,30 @@
 		outbufL = data.outputBuffer.getChannelData(0);
 		outbufR = data.outputBuffer.getChannelData(1);
 
-		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
+		for(var i=0; i<procsize; i++){ 
+			outbufL[i]=inbufL[i]; 
+			outbufR[i]=inbufR[i]; 
+			mData[iwpoint++]=outbufL[i];
+		}
+		iwpoint%=(WINDOW_SIZE*4);
 
-			fdg1.fClearWindowInside();
-			for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
+		fdg1.fClearWindowInside();
+		for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
 
-			//スレショルドを超えたらFFTする。
-			for(i=0; i<WINDOW_SIZE; i++){
-				mReal[i]=inbufL[i]*16;
-			}
+		//スレショルドを超えたらFFTする。
+		for(i=0; i<WINDOW_SIZE; i++){
+			mReal[i]=inbufL[i]*16;
+		}
 
-			transform(mReal, mImage);
+		transform(mReal, mImage);
 
-			var pavr=0;
-			for(i=1; i<WINDOW_HSIZE; i++){
-				pw = mReal[i]*mReal[i]+mImage[i]*mImage[i];
-				if(pw<=0) mPower[i]=0.;
-				else mPower[i]=10.*Math.log(pw)/Math.log(10.);
-				pavr+=mPower[i];
-			}
+		var pavr=0;
+		for(i=1; i<WINDOW_HSIZE; i++){
+			pw = mReal[i]*mReal[i]+mImage[i]*mImage[i];
+			if(pw<=0) mPower[i]=0.;
+			else mPower[i]=10.*Math.log(pw)/Math.log(10.);
+			pavr+=mPower[i];
+		}
 
 		if(drf){
 			waveshape.beginPath();
@@ -261,12 +266,14 @@ function recref1()
 	var fdg1 = new DrawGraph(ixb,ixw,iyb,iyw);
 	fdg1.fSetCanvas(document.getElementById('bkg'));
 	fdg1.fSetViewPort(0,WINDOW_SIZE,-1.0,1.0);
-	fdg1.fStrokeRect();
+//	fdg1.fStrokeRect();
 
 	var mReal=new Array(WINDOW_SIZE);
+	var mData=new Array(WINDOW_SIZE*4);
 	var mImage=new Array(WINDOW_SIZE);
 	var mWin=new Array(WINDOW_SIZE);
 	var mPower=new Array(WINDOW_HSIZE);
+	var iwpoint=0;
 	var pavr=0;
 
 	for(i=0; i<WINDOW_SIZE; i++){
