@@ -89,6 +89,8 @@
 	var iyw = 200;			//描画のX軸のサイズ
 	var drf = 1;
 	var ncnt=16;
+	var fsamp=0;
+	var fj=0;
 
 	/* 描画領域の初期化 */
 	var canvas = document.getElementById('waveshape');
@@ -116,50 +118,50 @@
 		if(drf){
 			if(ncnt==0){
 				ncnt=16;
-				waveshape.beginPath();
-				var ix=iy=0;
+				drawwave(inbufL,procsize);
+			} else ncnt--;
 
-				/* 描画領域のクリア */
-				waveshape.clearRect(ixb,iyb,ixw,iyw);
-
-				/* 波形の表示 */
-				waveshape.strokeStyle ="#000000";
-				waveshape.moveTo(ixb, iyb+iyw/2);
-				for(var i=0;i<procsize; i+=8){
-					iy=Math.floor(inbufL[i]*100+iyw/2+iyb);
-					if(iy >= iyw+iyb ) iy=iyw+iyb;
-					else if(iy<=iyb ) iy=iyb;
-
-					ix=Math.floor(i+ixb);
-					waveshape.lineTo(ix, iy);
-				}
-				waveshape.stroke();
-				} else ncnt--;
 		} else {
 
 			fdg1.fClearWindowInside();
 			for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
 
+			
 			//スレショルドを超えたらFFTする。
-			for(i=0; i<WINDOW_SIZE; i++){
-				mReal[i]=inbufL[i]*16;
+			if( fsamp==0 ) {
+				for(i=0; i<WINDOW_SIZE; i++){
+					if(inbufL[i]*100 > 50.){
+						fsamp=1; fj=0; break;
+					} else {
+						continue;
+					}
+				}
 			}
 
-			transform(mReal, mImage);
+			if(fsamp==0) return;
 
-			var pavr=0;
-			for(i=1; i<WINDOW_HSIZE; i++){
-				pw = mReal[i]*mReal[i]+mImage[i]*mImage[i];
-				if(pw<=0) mPower[i]=0.;
-				else mPower[i]=10.*Math.log(pw)/Math.log(10.);
-				pavr+=mPower[i];
+			for(; i<WINDOW_SIZE || fj<WINDOW_SIZE; i++, fj++){
+				mReal[fj]=inbufL[i]*16;
 			}
-			pavr/=512;
-			console.log(pavr);
 
-			fdg1.fSetViewPort(0,512,0,80.0);
-			fdg1.fDrawLine(mPower);
-			drf=1;
+			if( fj==WINDOW_SIZE ){
+				transform(mReal, mImage);
+
+				var pavr=0;
+				for(i=1; i<WINDOW_HSIZE; i++){
+					pw = mReal[i]*mReal[i]+mImage[i]*mImage[i];
+					if(pw<=0) mPower[i]=0.;
+					else mPower[i]=10.*Math.log(pw)/Math.log(10.);
+					pavr+=mPower[i];
+				}
+				pavr/=512;
+				console.log(pavr);
+
+				fdg1.fSetViewPort(0,512,0,80.0);
+				fdg1.fDrawLine(mPower);
+				drf=1;
+				fsamp=0;
+			}
 		}
 
 		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
@@ -257,6 +259,27 @@ function recref1()
 			console.log(mPower[pp]);
 		}
 	}
+
+function drawwave(inbuf,procsize)
+{
+	waveshape.beginPath();
+	var ix=iy=0;
+
+	/* 描画領域のクリア */
+	waveshape.clearRect(ixb,iyb,ixw,iyw);
+
+	/* 波形の表示 */
+	waveshape.strokeStyle ="#000000";
+	waveshape.moveTo(ixb, iyb+iyw/2);
+	for(var i=0;i<procsize; i+=8){
+		iy=Math.floor(inbufL[i]*100+iyw/2+iyb);
+		if(iy >= iyw+iyb ) iy=iyw+iyb;
+		else if(iy<=iyb ) iy=iyb;
+
+		ix=Math.floor(i+ixb);
+		waveshape.lineTo(ix, iy);
+	}
+}
 
 </script>
 </html>
