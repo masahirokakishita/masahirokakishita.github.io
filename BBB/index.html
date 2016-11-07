@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="peak.js"></script>
 	<script type="text/javascript" src="fft.js"></script>
 	<script type="text/javascript" src="drawgraph.js"></script>
+	<script type="text/javascript" src="dpmsub.js"></script>
 	<title>HSD2</title>
 
   <style type="text/css">
@@ -21,6 +22,7 @@
 {
 	var WINDOW_SIZE=1024;
 	var WINDOW_HSIZE=WINDOW_SIZE/2;
+	var WINDOW_MSIZE=WINDOW_SIZE/4;
 }
 
 {
@@ -96,7 +98,7 @@
     waveshape.strokeRect(ixb,iyb,ixw,iyw);
 
 	/* Audio Buffer が一杯になったらこの関数が呼ばれる */
-	function process(data){
+	function process2(data){
 		var procsize = data.inputBuffer.length;
 		/* L-ch を描画する */
 		var inbufL = data.inputBuffer.getChannelData(0);
@@ -105,38 +107,23 @@
 		var outbufR = data.outputBuffer.getChannelData(1);
 		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 	}
-	function process2(data){
+
+	var inbufL = null;
+	var inbufR = null;
+	var outbufL = null;
+	var outbufR = null;
+
+	function process(data){
 		var procsize = data.inputBuffer.length;
 		/* L-ch を描画する */
-		var inbufL = data.inputBuffer.getChannelData(0);
-		var inbufR = data.inputBuffer.getChannelData(1);
-		var outbufL = data.outputBuffer.getChannelData(0);
-		var outbufR = data.outputBuffer.getChannelData(1);
+		inbufL = data.inputBuffer.getChannelData(0);
+		inbufR = data.inputBuffer.getChannelData(1);
+		outbufL = data.outputBuffer.getChannelData(0);
+		outbufR = data.outputBuffer.getChannelData(1);
 
-		if(drf){
-			if(ncnt==0){
-				ncnt=16;
-				waveshape.beginPath();
-				var ix=iy=0;
+		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 
-				/* 描画領域のクリア */
-				waveshape.clearRect(ixb,iyb,ixw,iyw);
-
-				/* 波形の表示 */
-				waveshape.strokeStyle ="#000000";
-				waveshape.moveTo(ixb, iyb+iyw/2);
-				for(var i=0;i<procsize; i+=8){
-					iy=Math.floor(inbufL[i]*100+iyw/2+iyb);
-					if(iy >= iyw+iyb ) iy=iyw+iyb;
-					else if(iy<=iyb ) iy=iyb;
-
-					ix=Math.floor(i+ixb);
-					waveshape.lineTo(ix, iy);
-				}
-				waveshape.stroke();
-				} else ncnt--;
-		} else {
-
+<<<<<<< HEAD
 			fdg1.fClearWindowInside();
 			for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
 
@@ -153,16 +140,33 @@
 				if(pw<=0) mPower[i]=0.;
 				else mPower[i]=10.*Math.log(pw)/Math.log(10.);
 				pavr+=mPower[i];
-			}
-			pavr/=512;
-			console.log(pavr);
+=======
+		if(drf){
+			waveshape.beginPath();
+			var ix=iy=0;
 
-			fdg1.fSetViewPort(0,512,0,80.0);
-			fdg1.fDrawLine(mPower);
-			drf=1;
+			/* 描画領域のクリア */
+			waveshape.clearRect(ixb,iyb,ixw,iyw);
+
+			/* 波形の表示 */
+			waveshape.strokeStyle ="#000000";
+			waveshape.moveTo(ixb, iyb+iyw/2);
+			for(var i=0;i<procsize; i+=8){
+				iy=Math.floor(inbufL[i]*100+iyw/2+iyb);
+				if(iy >= iyw+iyb ) iy=iyw+iyb;
+				else if(iy<=iyb ) iy=iyb;
+
+				ix=Math.floor(i+ixb);
+				waveshape.lineTo(ix, iy);
+>>>>>>> origin/master
+			}
+			waveshape.stroke();
+
+			wavfft();
+		} else {
+
 		}
 
-		for(var i=0; i<procsize; i++){ outbufL[i]=inbufL[i]; outbufR[i]=inbufR[i]; }
 	}
 
 	//データ処理関数の定義
@@ -198,41 +202,21 @@ RIGHT GAIN: <input type="number" name="right" step="0.1" min="0.0" max="1.0" val
 <input type="button" value="REC REF1" onclick="recref1()">
 </body>
 <script>
-function recref1()
+	var recpeak1=[];
+	var recmag1=[];
+	var mDist=Array(WINDOW_HSIZE);
+	var mjj=0;
+	var icnt=0;
+
+	for(var i=0; i<WINDOW_HSIZE; i++){ mDist[i] = 0; } 
+	var dDist=0;
+
+function wavfft()
 {
-	if(drf) drf=0;
-	else drf=1;
-}
-</script>
-
-<script>
-	var mReal=new Array(WINDOW_SIZE);
-	var mImage=new Array(WINDOW_SIZE);
-	var mPower=new Array(WINDOW_HSIZE);
-
-	var rr = Math.PI/32;
-	var aa = 0;
-	var pw = 0;
-	var dt = 0;
-
 	for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
-	for(i=0; i<WINDOW_SIZE; i++, aa+=rr){
-		dt =Math.sin(aa);
-		if(dt>0.) mReal[i]=0.8;
-		else mReal[i]=-0.8;
+	for(i=0; i<WINDOW_SIZE; i++){
+		mReal[i]=mWin[i]*inbufL[i]*16;
 	}
-	var ixb = 100;	//描画X軸の基点
-	var iyb = 12;	//描画Y軸の基点
-	var ixw = 1124;	//描画のX軸のサイズ
-	var iyw = 212;	//描画のX軸のサイズ
-
-	/* 描画領域の初期化 */
-	var fdg1 = new DrawGraph(ixb,ixw,iyb,iyw);
-	fdg1.fSetCanvas(document.getElementById('bkg'));
-	fdg1.fSetViewPort(0,WINDOW_SIZE,-1.0,1.0);
-	fdg1.fStrokeRect();
-	fdg1.fDrawLine(mReal);
-
 	transform(mReal, mImage);
 
 	var pavr=0;
@@ -243,20 +227,125 @@ function recref1()
 		pavr+=mPower[i];
 	}
 	pavr/=WINDOW_HSIZE;
-	console.log(pavr);
 
-	fdg1.fSetViewPort(0,WINDOW_HSIZE,0,80.0);
-	fdg1.fDrawLine(mPower);
+	var pp=0;
+	var i=0;
+	var pfreq;
+	var cent;
+	var tagpeak=[];
+	var tagmag=[];
 
-
-	var pp = 0;
-	while(pp!=-1){
-		pp = nextMaxPeak(mPower,WINDOW_HSIZE,pp);
-		if(mPower[pp]>pavr*4.){
-			console.log(pp);
-			console.log(mPower[pp]);
+	while((pp=nextMaxPeak(mPower,WINDOW_MSIZE,pp))!=-1){
+		if(mPower[pp]>pavr+30){
+			pfreq = pp*sampleRate/WINDOW_SIZE;
+			cent = 1200.*Math.log(pfreq)/Math.log(2.)
+			tagpeak[i]= cent;
+			i++;
 		}
 	}
+
+	fdg1.fSetViewPort(0,WINDOW_HSIZE,0,1.0,0);
+
+	if(i>=2 && recpeak1.length){
+		setString(recpeak1,tagpeak);
+		var cDist=dpmCalc2()/mMaxValue;
+//		setString(recmag1,tagmag);
+//		dpmCalc3();
+
+		fdg1.fClearWindowInside();
+
+		for(var i=0; i<=WINDOW_HSIZE-1; i++){ mDist[WINDOW_HSIZE-i] = mDist[WINDOW_HSIZE-1-i]; }
+		
+		dDist = 0.05* (cDist-dDist)+dDist;
+		mDist[0]=dDist;
+		if(dDist<0.5) fdg1.fFillColor("#ff00ff");
+		else fdg1.fFillColor("#000000");
+		fdg1.fDrawLine(mDist);
+
+	}
+}
+
+
+function recref1()
+{
+	if(drf){
+		drf=0;
+		fdg1.fClearWindowInside();
+		for(i=0; i<WINDOW_SIZE; i++) mImage[i]=0;
+		for(i=0; i<WINDOW_SIZE; i++){
+			mReal[i]=mWin[i]*inbufL[i]*16;
+		}
+		transform(mReal, mImage);
+
+		var pavr=0;
+		for(i=1; i<WINDOW_HSIZE; i++){
+			pw = mReal[i]*mReal[i]+mImage[i]*mImage[i];
+			if(pw<=0) mPower[i]=0.;
+			else mPower[i]=10.*Math.log(pw)/Math.log(10.);
+			pavr+=mPower[i];
+		}
+		pavr/=WINDOW_HSIZE;
+		console.log(pavr);
+
+		fdg1.fSetViewPort(0,WINDOW_HSIZE,0,80.0);
+		fdg1.fDrawLine(mPower);
+
+		log.innerText ="\n";
+		var pp=0;
+		var i=0;
+		var pfreq;
+		var cent;
+		
+		recpeak1=[];
+		recmag1=[];
+
+		while((pp=nextMaxPeak(mPower,WINDOW_MSIZE,pp))!=-1){
+			if(mPower[pp]>pavr+30){
+				pfreq = pp*sampleRate/WINDOW_SIZE;
+				cent = 1200.*Math.log(pfreq)/Math.log(2.)
+				log.innerText +=pfreq;
+				log.innerText +="  ";
+				log.innerText +=cent;
+				log.innerText +="  ";
+				log.innerText +=mPower[pp];
+				log.innerText +="\n";
+				recpeak1[i]= cent;
+				recmag1[i]= mPower[pp];
+				i++;
+			}
+		}
+		icnt=i;
+		console.log(icnt);
+
+
+	} else drf=1;
+}
+</script>
+
+<script>
+	var ixb = 100;	//描画X軸の基点
+	var iyb = 12;	//描画Y軸の基点
+	var ixw = 1124;	//描画のX軸のサイズ
+	var iyw = 212;	//描画のX軸のサイズ
+
+	/* 描画領域の初期化 */
+	var fdg1 = new DrawGraph(ixb,ixw,iyb,iyw);
+	fdg1.fSetCanvas(document.getElementById('bkg'));
+	fdg1.fSetViewPort(0,WINDOW_SIZE,-1.0,1.0);
+	fdg1.fStrokeRect();
+
+	var mReal=new Array(WINDOW_SIZE);
+	var mImage=new Array(WINDOW_SIZE);
+	var mWin=new Array(WINDOW_SIZE);
+	var mPower=new Array(WINDOW_HSIZE);
+	var pavr=0;
+
+	for(i=0; i<WINDOW_SIZE; i++){
+		mWin[i] = 0.5-0.5*Math.cos(2.*Math.PI*i/(WINDOW_SIZE-1));
+	}
+
+	fdg1.fSetViewPort(0,WINDOW_HSIZE,0,1.0,0);
+	fdg1.fDrawLine(mWin);
 
 </script>
 </html>
