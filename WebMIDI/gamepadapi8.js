@@ -132,10 +132,10 @@
 	var descriptor = {
 		blocks: [
 //			[' ', 'AAA MIDI %n %n %n', 'midiout', 10, 36, 80],
-			['h', 'X-', 's_getXbtn'],
-			['h', 'Y-', 's_getYbtn'],
-			['h', 'A-', 's_getAbtn'],
-			['h', 'B-', 's_getBbtn'],
+			['h', 'X-Button', 's_getXbtn'],
+			['h', 'Y-Button', 's_getYbtn'],
+			['h', 'A-Button', 's_getAbtn'],
+			['h', 'B-Button', 's_getBbtn'],
 
 //			['r', 'CC %n', 's_ccin',30],
 //			['h', 'GET NOTE ON', 's_getnoteon'],
