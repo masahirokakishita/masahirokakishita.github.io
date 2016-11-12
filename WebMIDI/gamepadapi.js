@@ -140,8 +140,8 @@
 	// Block and block menu descriptions
 	var descriptor = {
 		blocks: [
-			[' ', 'PUT MIDI %n %n %n', 'midiout', 10, 36, 80],
-			['h', 'GET CC', 's_getcc'],
+			[' ', 'AAA MIDI %n %n %n', 'midiout', 10, 36, 80],
+			['h', 'BBB CC', 's_getcc'],
 			['r', 'CC %n', 's_ccin',30],
 			['h', 'GET NOTE ON', 's_getnoteon'],
 			['h', 'KEY ON', 's_getkeyon'],
