@@ -23,6 +23,8 @@
 /* for Web MIDI API */
 /* -------------------------------------------------------------------------	*/
 
+	var pad;
+
 	function runAnimation()
 	{
 		window.requestAnimationFrame(runAnimation);
@@ -30,29 +32,9 @@
 		var gamepads = navigator.getGamepads();
 		var gamepad_num =gamepads.length;
 
-		var i, b, a;
-		var no_pad = true;
-		for (i=0; i<gamepad_num; i++) {
-			var pad = gamepads[i];
-			if(pad!=null) {
-				no_pad = false;
-				console.log(pad.buttons[1].pressed, pad.buttons[1].value);
-//				gamepad_info += "Gamepad[" + i + "]<br>";
-
-				for (b=0; b<pad.buttons.length; b++) {
-//					gamepad_info += "buttons[" + b + "]=" + pad.buttons[b].pressed + " : " + pad.buttons[b].value + "<br>";
-				}
-
-				for (a=0; a<pad.axes.length; a++) {
-//					gamepad_info += "axis[" + a + "]=" + pad.axes[a] + "<br>";
-				}
-			}
+		for (var i=0; i<gamepad_num; i++) {
+			pad[i] = gamepads[i];
 		}
-		
-		if (no_pad) {
-//			gamepad_info = '画面をクリックした後にゲームパッドのボタンを押して下さい';
-		}
-		document.getElementById('log').innerHTML = gamepad_info;
 	}
 
 	window.requestAnimationFrame(runAnimation);
@@ -75,17 +57,25 @@
     };
 
 /* -------------------------------------------------------------------------	*/
-// GET CC
-	ext.s_getcc = function() {
-		// Reset alarm_went_off if it is true, and return true
-		// otherwise, return false.
-//		if (mCC_change_event === true) {
-			return true;
-//       }
-       return false;
+// BUTTON X- Y- A- B-
+	ext.s_getXbtn = function() {
+		return pad[0].buttons[2].pressed;
+	};
+
+	ext.s_getYbtn = function() {
+		return pad[0].buttons[3].pressed;
+	};
+
+	ext.s_getAbtn = function() {
+		return pad[0].buttons[0].pressed;
+	};
+
+	ext.s_getBbtn = function() {
+		return pad[0].buttons[1].pressed;
 	};
 
 
+/* -------------------------------------------------------------------------	*/
 // Set CC Value
 // ccnum: Control Change Number
 	ext.s_ccin = function(ccnum) {
@@ -140,19 +130,23 @@
 	// Block and block menu descriptions
 	var descriptor = {
 		blocks: [
-			[' ', 'AAA MIDI %n %n %n', 'midiout', 10, 36, 80],
-			['h', 'BBB CC', 's_getcc'],
-			['r', 'CC %n', 's_ccin',30],
-			['h', 'GET NOTE ON', 's_getnoteon'],
-			['h', 'KEY ON', 's_getkeyon'],
-			['h', 'KEY OFF', 's_getkeyoff'],
-			['r', 'NOTE', 's_note'],
-			['r', 'VEL', 's_vel'],
+//			[' ', 'AAA MIDI %n %n %n', 'midiout', 10, 36, 80],
+			['h', 'X-', 's_getXbtn'],
+			['h', 'Y-', 's_getYbtn'],
+			['h', 'A-', 's_getAbtn'],
+			['h', 'B-', 's_getBbtn'],
+
+//			['r', 'CC %n', 's_ccin',30],
+//			['h', 'GET NOTE ON', 's_getnoteon'],
+//			['h', 'KEY ON', 's_getkeyon'],
+//			['h', 'KEY OFF', 's_getkeyoff'],
+//			['r', 'NOTE', 's_note'],
+//			['r', 'VEL', 's_vel'],
 			['-'],
 		]
 	};
 
     // Register the extension
-    ScratchExtensions.register('Web MIDI API extension', descriptor, ext);
+    ScratchExtensions.register('GAME PAD API extension', descriptor, ext);
 })({});
 
