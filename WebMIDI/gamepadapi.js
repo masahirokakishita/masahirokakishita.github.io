@@ -36,7 +36,7 @@
 			var pad = gamepads[i];
 			if(pad!=null) {
 				no_pad = false;
-				console.log(pad.buttons[b].pressed, pad.buttons[b].value);
+				console.log(pad.buttons[1].pressed, pad.buttons[1].value);
 //				gamepad_info += "Gamepad[" + i + "]<br>";
 
 				for (b=0; b<pad.buttons.length; b++) {
