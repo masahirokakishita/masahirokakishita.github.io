@@ -23,9 +23,9 @@
 /* for Web MIDI API */
 /* -------------------------------------------------------------------------	*/
 
-	var pad=null;
+	var pad= new Array(4);
 
-	function runAnimation()
+	function runAnimation(
 	{
 		window.requestAnimationFrame(runAnimation);
 	    var gamepad_info = '';
