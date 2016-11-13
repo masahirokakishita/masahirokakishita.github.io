@@ -75,6 +75,23 @@
 		return pad[0].buttons[1].pressed;
 	};
 
+//Set Value
+	ext.s_Xval = function() {
+		return (pad[0].buttons[2].value);
+	};
+
+	ext.s_Yval = function() {
+		return (pad[0].buttons[3].value);
+	};
+
+	ext.s_Aval = function() {
+		return (pad[0].buttons[0].value);
+	};
+
+	ext.s_Bval = function() {
+		return (pad[0].buttons[1].value);
+	};
+
 
 /* -------------------------------------------------------------------------	*/
 // Set CC Value
@@ -136,6 +153,11 @@
 			['h', 'Y-Button', 's_getYbtn'],
 			['h', 'A-Button', 's_getAbtn'],
 			['h', 'B-Button', 's_getBbtn'],
+
+			['r', 'X-Val', 's_Yval'],
+			['r', 'Y-Val', 's_Yval'],
+			['r', 'A-Val', 's_Aval'],
+			['r', 'B-Val', 's_Bval'],
 
 //			['r', 'CC %n', 's_ccin',30],
 //			['h', 'GET NOTE ON', 's_getnoteon'],
