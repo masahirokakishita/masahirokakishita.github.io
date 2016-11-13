@@ -31,6 +31,7 @@
 	    var gamepad_info = '';
 		var gamepads = navigator.getGamepads();
 		var gamepad_num =gamepads.length;
+		pad = new Array(gamepad_num);
 
 		for (var i=0; i<gamepad_num; i++) {
 			if(gamepads[i]!=null) pad[i] = gamepads[i];
@@ -72,6 +73,58 @@
 
 	ext.s_getBbtn = function() {
 		return pad[0].buttons[1].pressed;
+	};
+
+//Set Value
+	ext.s_Xval = function() {
+		return (pad[0].buttons[2].value);
+	};
+
+	ext.s_Yval = function() {
+		return (pad[0].buttons[3].value);
+	};
+
+	ext.s_Aval = function() {
+		return (pad[0].buttons[0].value);
+	};
+
+	ext.s_Bval = function() {
+		return (pad[0].buttons[1].value);
+	};
+
+/* -------------------------------------------------------------------------	*/
+// BUTTON L1- L2- R1- R2-
+	ext.s_getL1btn = function() {
+		return pad[0].buttons[4].pressed;
+	};
+
+	ext.s_getL2btn = function() {
+		return pad[0].buttons[5].pressed;
+	};
+
+	ext.s_getR1btn = function() {
+		return pad[0].buttons[6].pressed;
+	};
+
+	ext.s_getR2btn = function() {
+		return pad[0].buttons[7].pressed;
+	};
+
+//Set Value
+	ext.s_L1val = function() {
+		return (pad[0].buttons[4].value);
+	};
+
+	ext.s_L2val = function() {
+		return (pad[0].buttons[5].value);
+	};
+
+	ext.s_R1val = function() {
+		return (pad[0].buttons[6].value);
+	};
+
+	ext.s_R2val = function() {
+		return (pad[0].buttons[7].value);
 	};
 
 
@@ -131,10 +184,25 @@
 	var descriptor = {
 		blocks: [
 //			[' ', 'AAA MIDI %n %n %n', 'midiout', 10, 36, 80],
-			['h', 'X-', 's_getXbtn'],
-			['h', 'Y-', 's_getYbtn'],
-			['h', 'A-', 's_getAbtn'],
-			['h', 'B-', 's_getBbtn'],
+			['h', 'X-Button', 's_getXbtn'],
+			['h', 'Y-Button', 's_getYbtn'],
+			['h', 'A-Button', 's_getAbtn'],
+			['h', 'B-Button', 's_getBbtn'],
+
+			['r', 'X-Val', 's_Xval'],
+			['r', 'Y-Val', 's_Yval'],
+			['r', 'A-Val', 's_Aval'],
+			['r', 'B-Val', 's_Bval'],
+
+			['h', 'L1-Button', 's_getL1btn'],
+			['h', 'L2-Button', 's_getL2btn'],
+			['h', 'R1-Button', 's_getR1btn'],
+			['h', 'R2-Button', 's_getR2btn'],
+
+			['r', 'L1-Val', 's_L1val'],
+			['r', 'L2-Val', 's_L2val'],
+			['r', 'R1-Val', 's_R1val'],
+			['r', 'R2-Val', 's_R2val'],
 
 //			['r', 'CC %n', 's_ccin',30],
 //			['h', 'GET NOTE ON', 's_getnoteon'],
