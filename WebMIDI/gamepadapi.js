@@ -252,6 +252,6 @@
 	};
 
     // Register the extension
-    ScratchExtensions.register('GAME PAD API extension', descriptor, ext);
+    ScratchExtensions.register('GAME PAD', descriptor, ext);
 })({});
 
