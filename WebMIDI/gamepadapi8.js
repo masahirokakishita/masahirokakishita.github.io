@@ -154,7 +154,7 @@
 			['h', 'A-Button', 's_getAbtn'],
 			['h', 'B-Button', 's_getBbtn'],
 
-			['r', 'X-Val', 's_Yval'],
+			['r', 'X-Val', 's_Xval'],
 			['r', 'Y-Val', 's_Yval'],
 			['r', 'A-Val', 's_Aval'],
 			['r', 'B-Val', 's_Bval'],
