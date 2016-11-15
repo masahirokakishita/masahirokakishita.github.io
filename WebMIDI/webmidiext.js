@@ -90,6 +90,8 @@
 	var mNoteNum = 0;
 	var mNoteVel = 0;
 	var mNoteBuf = 0;
+	var mNoteOn = new Array(0x100);
+	for(var i=0; i<0x100; i++) mNoteOn[i]=0;
 
 	/* MIDI parse */
 	function m_midiin(event){
@@ -126,6 +128,7 @@
 
 		if(vel>0){
 			mKey_on_event = true;
+			mNoteOn[mNoteNum] = true;
 		} else {
 			mKey_off_event = true;
 		}
@@ -190,6 +193,17 @@
        return false;
 	};
 
+// GET KEY ON with keynumber
+	ext.s_getkeyonnum = function(ckeynum) {
+		// Reset alarm_went_off if it is true, and return true
+		// otherwise, return false.
+		if (mNoteOn[ckeynum] === true) {
+			mNoteOn[ckeynum] = false;
+			return true;
+       }
+       return false;
+	};
+
 // GET KEY OFF
 	ext.s_getkeyoff = function() {
 		// Reset alarm_went_off if it is true, and return true
@@ -219,6 +233,7 @@
 			['h', 'GET CC', 's_getcc'],
 			['r', 'CC %n', 's_ccin',30],
 			['h', 'GET NOTE ON', 's_getnoteon'],
+			['h', 'KEY ON %n', 's_getkeyonnum',60],
 			['h', 'KEY ON', 's_getkeyon'],
 			['h', 'KEY OFF', 's_getkeyoff'],
 			['r', 'NOTE', 's_note'],
@@ -230,4 +245,3 @@
     // Register the extension
     ScratchExtensions.register('Web MIDI API extension', descriptor, ext);
 })({});
-
