@@ -22,100 +22,137 @@ alink="#ff0000" style="margin-right:30px;margin-left:30px;margin-top:20px;">
 <br>
 <!--	-------------------------------------------------------------------- -->
 <div id="sans10" align="right">2016.11.13</div>
-<center><h2>GamePad API Extension for ScratchX</h2></center>
+<center><h2>Gamepad API Extension for ScratchX</h2></center>
 <!--	-------------------------------------------------------------------- -->
 <div id="sans14">
-This extension is for using a GamePad of PlayStation for ScratchX.
-It's made by Web MIDI API.
-This API is one of the HTML5 functions defined by W3C.
+This extension is for using a Gamepad for PlayStation or the others for ScratchX.<br>
+It's made by Gamepad API.<br>
+This API is one of the HTML5 functions defined by W3C.<br>
 
 <ul>
-	<li>Web MIDI API Working Draft <a href="https://www.w3.org/TR/gamepad/" TARGET="_blank">https://www.w3.org/TR/gamepad/</a>
+	<li>Gamepad API <a href="https://www.w3.org/TR/gamepad/" TARGET="_blank">https://www.w3.org/TR/gamepad/</a>
 	<li>W3C <a href="http://www.w3.org/" TARGET="_blank">http://www.w3.org/</a>
 </ul>
 
-<font color="red">So this extension is able to use only on Chrome.</font>
-The other browsers are not supporting Web MIDI API now, April 2016.
+<font color="red">This extension is able to use only on Chrome.</font><br>
+I neber check the other browsers can use Gamepad API now, December 2016.<br>
+A following photo is an example of Gamepad. <br>
 <br>
-Do you know MIDI? MIDI is a protocol for connecting between MIDI Devices or a MIDI device to the PC. 
-If you don't know, please see like a following page.
-
-<ul>
-	<li>MIDI wiki <a href="https://en.wikipedia.org/wiki/MIDI" TARGET="_blank">https://en.wikipedia.org/wiki/MIDI</a>
-	<li>SUMMARY OF MIDI MESSAGES <a href="https://www.midi.org/specifications/" TARGET="_blank">https://www.midi.org/specifications</a>
-</ul>
-
-Before you try to use these extensions, you should connect a MIDI device to your PC via USB. 
-After you connect a MIDI device, you launch Chrome browser. 
-Because Chrome browser finds the MIDI device when it launches.
+You can connect a Gamepad to PC via a gamepad usb comberter.<br>
+<img width="800" src="JPEG/gamepad/SN3G1753.JPG"><br>
 <br><br>
-There are five blocks in this extension - a "GET CC", "GET NOTE ON", "PUT MIDI", <b>"KEY ON"</b> and <b>"KEY OFF"</b> block. 
-<br>
+There are nine hat blocks and ten synchronous reporters and in this extension. <br>
+
+<table><tr><td>
 <ul>
-<li>GET CC
-<li>GET NOTE ON
-<li>PUT MIDI
-<li>KEY ON
-<li>KEY OFF
+<b>Hast</b>
+<li>X-Button
+<li>Y-Button
+<li>A-Button
+<li>B-Button
+</ul><ul>
+<li>L1-Button
+<li>L2-Button
+<li>R1-Button
+<li>R2-Button
+</ul><ul>
+<li>Horizontal
+<li>Vartical
 </ul>
 
+<ul>
+<b>Reporters</b>
+<li>X-Val
+<li>Y-Val
+<li>A-Val
+<li>B-Val
+</ul><ul>
+<li>L1-Val
+<li>L2-Val
+<li>R1-Val
+<li>R2-Val
+</ul><ul>
+<li>H-Val
+<li>V-Val
+</ul>
+</td>
+<!--	-------------------------------------------------------------------- -->
+<td width="50"></td>
+<!--	-------------------------------------------------------------------- -->
+<td>
+<img width="800" src="JPEG/gamepad/SN3G1749.JPG"><br>
+</td>
+</tr>
+</table>
+
+<img width="800" src="JPEG/gamepad/SN3G1752.JPG"><br>
+
+<!--	-------------------------------------------------------------------- -->
 <hr width="50%" align="left"><br>
 The extension is here.<br>
 
-http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fwebmidiext.js
+http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fgamepadapi.js
 <br><br>
 
+<!--	-------------------------------------------------------------------- -->
 <hr width="50%" align="left">
 <br>
-<b>GET CC</b></br>
-
-"GET CC" is consisted of a hat block  and a synchronous reporter.  The hat block <img src="JPEG/pcchat.jpg"> informs a MIDI CC data comes. And the synchronous reporter <img src="JPEG/pccparam.jpg"> has one parameter. It's a MIDI control change number. The reporter gets the CC value of the CC number defined by the parameter. <br>
+<b>X-Button/Y-Button/A-Button/B-Button</b></br>
+ <img src="JPEG/gamepad/XB.jpg"> <img src="JPEG/gamepad/YB.jpg"> <img src="JPEG/gamepad/AB.jpg"> <img src="JPEG/gamepad/BB.jpg"><br>
+These hats indicates that pushing right side butons of a gamepad.<br>
 <br>
 
-<b>GET NOTE ON</b></br>
-"GET NOTE ON" <img src="JPEG/getnote.jpg"> is consisted of a hat block and two synchronous reporters. The hat block informs a MIDI NOTE ON message. NOTE ON message is included two statuses, 0x80 and 0x90. One synchronous reporter indicates the note number and the other indicates the velocity. The case of status 0x80, the velocity is set to zero.
+<b>X-Val/Y-Val/A-Val/B-Val</b></br>
+ <img src="JPEG/gamepad/XVal.jpg">
 <br><br>
 
-<b>PUT MIDI</b></br>
-"PUT MIDI" <img src="JPEG/pcmidiout.jpg"> genarates a MIDI NOTE ON message. The first parameter is a channel number, the second one is a note number and last one is a velocity. Normary the velocity is zero means note off.
+<b>L1-Button/L2-Button/R1-Button/R2-Button</b></br>
+ <img src="JPEG/gamepad/L1B.jpg"> <img src="JPEG/gamepad/L2B.jpg"> <img src="JPEG/gamepad/R1B.jpg"> <img src="JPEG/gamepad/R2B.jpg"><br>
 <br><br>
 
-<b>KEY ON</b></br>
-"KEY ON" <img src="JPEG/keyon.jpg"> is a hat block that indicates when a keyboad is pushed.
+<b>L1-Val/L2-Val/R1-Val/R2-Val</b></br>
+<img src="JPEG/gamepad/LRVal.jpg">
 <br><br>
 
-<b>KEY OFF</b></br>
-"KEY OFF" <img src="JPEG/keyoff.jpg"> is a hat block that indicates when a keyboad is released.
+
+<b>H-Button/V-Button</b></br>
+ <img src="JPEG/gamepad/HB.jpg"> <img src="JPEG/gamepad/VB.jpg"><br>
 <br><br>
 
-<hr width="50%" align="left">
-<br>
-<a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fproject.sbx" TARGET="_blank">This is an example using this extension.</a>
-<br><br>
-<iframe width="420" height="315" src="https://www.youtube.com/embed/iWIwDGgzD1Y" frameborder="0" allowfullscreen></iframe>
-<br><br>
-In this movie's case, when a key on the keyboard is hit a small rocket moves to a position defined by key number and velocity.
+
+<b>H-Val/V-Val</b></br>
+<img src="JPEG/gamepad/HVVal.jpg">
 <br><br>
 
 <!-- ---------------------------------------------------------------------	-->
 <hr width="50%" align="left">
 <br>
 <b>Example 1</b></br>
-This example is for separationg Note Off from Note On. Note Off can be found by the velocity is zero.<br>
-<img src="JPEG/example1.jpg"><br>
-<a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fnodeonoff.sbx" TARGET="_blank">The Example is here.</a><br>
+<img src="JPEG/gamepad/example1.jpg"><br>
+<a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2Fgamepadex1.sbx" TARGET="_blank">The Example is here.</a><br>
 <br><br>
 
 <!-- ---------------------------------------------------------------------	-->
 <hr width="50%" align="left">
 <br>
 <b>Example 2</b></br>
-This Example is using "KEY ON" and "KEY OFF" hats.<br>
 <br>
-<img src="JPEG/example2.jpg"><br>
+<img src="JPEG/gamepad/example2-1.jpg"><img src="JPEG/gamepad/example2-2.jpg"><br>
 <br>
-<a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fkeyonoffhat.sbx" TARGET="_blank">The Example is here.</a><br>
+<a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2Fgamepadex2.sbx" TARGET="_blank">The Example is here.</a><br>
 <br><br>
+
+
+<!-- ---------------------------------------------------------------------	-->
+<hr width="50%" align="left">
+<br>
+<b>Example 3</b></br>
+<br>
+<img src="JPEG/gamepad/example3.jpg"><br>
+<br>
+<a href="http://scratchx.org/?url=http%3A%2F%2Fmasahirokakishita.github.io%2Fgamepadex3.sbx" TARGET="_blank">The Example is here.</a><br>
+<br><br>
+
 
 
 </body>
