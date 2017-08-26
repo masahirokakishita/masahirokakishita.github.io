@@ -12,12 +12,13 @@
     // final argument. This should be called to indicate that the block can
     // stop waiting.
     ext.wait_random = function(callback) {
-    };
+		return true; 
+   };
 
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['b', 'wait aaa %m.motorDirection', 'wait_random', 'this way'],
+            ['b', 'wait bbb %m.motorDirection', 'wait_random', 'this way'],
         ],
 
 		menus: {
