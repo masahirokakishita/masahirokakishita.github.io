@@ -84,14 +84,17 @@
 	var mCC_change_event=false;
 	var mCtlbuf = new Array(0x80);
 	for(var i=0; i<0x80; i++) mCtlbuf[i]=0;
-	var mNote_on_event = false;
-	var mKey_on_event = false;
-	var mKey_off_event = false;
-	var mPC_event=false;
+	var mNote_on_event 	= false;
+	var mKey_on_event 	= false;
+	var mKey_off_event 	= false;
+	var mPC_event		= false;
+	var mPBend_event	= false;
+
 	var mNoteNum = 0;
 	var mNoteVel = 0;
 	var mNoteBuf = 0;
 	var mPCn	 = 0;
+	var mPBend	 = 0;
 	var mNoteOn = new Array(0x100);
 
 	for(var i=0; i<0x100; i++) mNoteOn[i]=0;
@@ -117,6 +120,8 @@
 				mPCn=event.data[1];
 				break;
 			case 0xD0:
+				mPBend_event=true;
+				mPBend=event.data[1];
 				break;
 			case 0xE0:
 				break;
@@ -230,6 +235,7 @@
 		return (mNoteVel);
 	};
 
+/* -------------------------------------------------------------------------	*/
 //Set Program Change Event
 	ext.s_pevent = function() {
 		// Reset alarm_went_off if it is true, and return true
@@ -247,6 +253,24 @@
 	};
 
 /* -------------------------------------------------------------------------	*/
+//Set Program Change Event
+	ext.s_pbevent = function() {
+		// Reset alarm_went_off if it is true, and return true
+		// otherwise, return false.
+		if (mPBend_event === true) {
+			mPBend_event = false;
+			return true;
+       }
+       return false;
+	};
+
+//Set Note Vel
+	ext.s_pbend = function() {
+		return (mPBend);
+	};
+
+
+/* -------------------------------------------------------------------------	*/
 	// Block and block menu descriptions
 	var descriptor = {
 		blocks: [
@@ -261,6 +285,8 @@
 			['r', 'VEL', 			's_vel'],
 			['h', 'PCE', 			's_pcevent'],
 			['r', 'PC', 			's_pchange'],
+			['h', 'PBE', 			's_pbevent'],
+			['r', 'PB', 			's_pbend'],
 			['-'],
 		]
 	};
