@@ -18,7 +18,7 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['b', 'wait bbb %m.motorDirection', 'wait_random', 'this way'],
+            ['b', 'wait ccc %m.motorDirection', 'wait_random', 'this way'],
         ],
 
 		menus: {
