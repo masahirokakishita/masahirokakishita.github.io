@@ -120,10 +120,10 @@
 				mPCn=event.data[1];
 				break;
 			case 0xD0:
-				mPBend_event=true;
-				mPBend=event.data[2];
 				break;
 			case 0xE0:
+				mPBend_event=true;
+				mPBend=event.data[2];
 				break;
 			case 0xF0:
 				break;
