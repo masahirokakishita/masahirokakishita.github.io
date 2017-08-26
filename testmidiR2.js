@@ -17,8 +17,15 @@
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
-            ['b', 'wait aaa', 'wait_random'],
-        ]
+            ['b', 'wait aaa %m.motorDirection', 'wait_random', 'this way'],
+        ],
+
+		menus: {
+			motorDirection: ['this way', 'that way', 'reverse'],
+			lessMore: ['<', '>'],
+			eNe: ['=','not =']
+		},
+
     };
 
     // Register the extension
