@@ -87,10 +87,13 @@
 	var mNote_on_event = false;
 	var mKey_on_event = false;
 	var mKey_off_event = false;
+	var mPC_event=false;
 	var mNoteNum = 0;
 	var mNoteVel = 0;
 	var mNoteBuf = 0;
+	var mPCn	 = 0;
 	var mNoteOn = new Array(0x100);
+
 	for(var i=0; i<0x100; i++) mNoteOn[i]=0;
 
 	/* MIDI parse */
@@ -110,6 +113,8 @@
 				mCtlbuf[event.data[1]]=event.data[2];
 				break;
 			case 0xC0:
+				mPC_event=true;
+				mPCn=event.data[1];
 				break;
 			case 0xD0:
 				break;
@@ -225,19 +230,37 @@
 		return (mNoteVel);
 	};
 
+//Set Program Change Event
+	ext.s_pevent = function() {
+		// Reset alarm_went_off if it is true, and return true
+		// otherwise, return false.
+		if (mPC_event === true) {
+			mPC_event = false;
+			return true;
+       }
+       return false;
+	};
+
+//Set Note Vel
+	ext.s_pchange = function() {
+		return (mPCn);
+	};
+
 /* -------------------------------------------------------------------------	*/
 	// Block and block menu descriptions
 	var descriptor = {
 		blocks: [
 			[' ', 'PUT MIDI %n %n %n', 'midiout', 10, 36, 80],
-			['h', 'GET CC', 's_getcc'],
-			['r', 'CC %n', 's_ccin',30],
-			['h', 'GET NOTE ON', 's_getnoteon'],
-			['h', 'KEY ON %n', 's_getkeyonnum',60],
-			['h', 'KEY ON', 's_getkeyon'],
-			['h', 'KEY OFF', 's_getkeyoff'],
-			['r', 'NOTE', 's_note'],
-			['r', 'VEL', 's_vel'],
+			['h', 'GET CC', 		's_getcc'],
+			['r', 'CC %n', 			's_ccin',30],
+			['h', 'GET NOTE ON',	's_getnoteon'],
+			['h', 'KEY ON %n',		's_getkeyonnum',60],
+			['h', 'KEY ON',			's_getkeyon'],
+			['h', 'KEY OFF',		's_getkeyoff'],
+			['r', 'NOTE', 			's_note'],
+			['r', 'VEL', 			's_vel'],
+			['h', 'PCE', 			's_pcevent'],
+			['r', 'PC', 			's_pchange'],
 			['-'],
 		]
 	};
