@@ -11,7 +11,7 @@
     // Functions for block with type 'w' will get a callback function as the 
     // final argument. This should be called to indicate that the block can
     // stop waiting.
-    ext.wait_random = function(callback) {
+    ext.wait_random = function(aaa) {
 		return true; 
    };
 
@@ -22,7 +22,7 @@
         ],
 
 		menus: {
-			motorDirection: ['this way', 'that way', 'reverse'],
+			motorDirection: ['this way', 'aaa way', 'bbb'],
 			lessMore: ['<', '>'],
 			eNe: ['=','not =']
 		},
