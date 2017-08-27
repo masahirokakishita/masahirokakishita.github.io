@@ -285,7 +285,7 @@
 	ext.s_event = function(n_event) {
 		var n_flag=false;
 
-		switch(n?event){
+		switch(n_event){
 			case 'key on':
 			{
 				if (mKey_on_flag == true) {
