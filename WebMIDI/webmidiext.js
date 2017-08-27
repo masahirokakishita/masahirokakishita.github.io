@@ -37,7 +37,7 @@
 
 		if(m.inputs.size==0) failure();
 
-		if (typeof m.inputs === "function") {
+		if (typeof m.inputs == "function") {
 			inputs=m.inputs();
 			outputs=m.outputs();
 		} else {
@@ -81,20 +81,27 @@
 		}
 	};
 
-	var mCC_change_event=false;
 	var mCtlbuf = new Array(0x80);
 	for(var i=0; i<0x80; i++) mCtlbuf[i]=0;
+
+	var mCC_change_event=false;
 	var mNote_on_event 	= false;
 	var mKey_on_event 	= false;
 	var mKey_off_event 	= false;
 	var mPC_event		= false;
 	var mPBend_event	= false;
 
+	var mCC_change_flag	=false;
+	var mKey_on_flag 	= false;
+	var mKey_off_flag 	= false;
+	var mPC_flag		= false;
+	var mPBend_flag		= false;
+
 	var mNoteNum = 0;
 	var mNoteVel = 0;
 	var mNoteBuf = 0;
 	var mPCn	 = 0;
-	var mPBend	 = 0;
+	var mPBend	 = 64;
 	var mNoteOn = new Array(0x100);
 
 	for(var i=0; i<0x100; i++) mNoteOn[i]=0;
@@ -113,16 +120,19 @@
 				break;
 			case 0xB0:
 				mCC_change_event=true;
+				mCC_change_flag=true;
 				mCtlbuf[event.data[1]]=event.data[2];
 				break;
 			case 0xC0:
 				mPC_event=true;
+				mPC_flag=true;
 				mPCn=event.data[1];
 				break;
 			case 0xD0:
 				break;
 			case 0xE0:
 				mPBend_event=true;
+				mPBend_flag=true;
 				mPBend=event.data[2];
 				break;
 			case 0xF0:
@@ -138,9 +148,11 @@
 
 		if(vel>0){
 			mKey_on_event = true;
+			mKey_on_flag	= true;
 			mNoteOn[mNoteNum] = true;
 		} else {
 			mKey_off_event = true;
+			mKey_off_flag	= true;
 		}
 	}
 
@@ -166,7 +178,7 @@
 	ext.s_getcc = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (mCC_change_event === true) {
+		if (mCC_change_event == true) {
 			mCC_change_event = false;
 			return true;
        }
@@ -185,7 +197,7 @@
 	ext.s_getnoteon = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (mNote_on_event === true) {
+		if (mNote_on_event == true) {
 			mNote_on_event = false;
 			return true;
        }
@@ -196,7 +208,7 @@
 	ext.s_getkeyon = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (mKey_on_event === true) {
+		if (mKey_on_event == true) {
 			mKey_on_event = false;
 			return true;
        }
@@ -207,7 +219,7 @@
 	ext.s_getkeyonnum = function(ckeynum) {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (mNoteOn[ckeynum] === true) {
+		if (mNoteOn[ckeynum] == true) {
 			mNoteOn[ckeynum] = false;
 			return true;
        }
@@ -218,7 +230,7 @@
 	ext.s_getkeyoff = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (mKey_off_event === true) {
+		if (mKey_off_event == true) {
 			mKey_off_event = false;
 			return true;
        }
@@ -240,7 +252,7 @@
 	ext.s_pevent = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (mPC_event === true) {
+		if (mPC_event == true) {
 			mPC_event = false;
 			return true;
        }
@@ -257,7 +269,7 @@
 	ext.s_pbevent = function() {
 		// Reset alarm_went_off if it is true, and return true
 		// otherwise, return false.
-		if (mPBend_event === true) {
+		if (mPBend_event == true) {
 			mPBend_event = false;
 			return true;
        }
@@ -269,6 +281,58 @@
 		return (mPBend);
 	};
 
+//Event
+	ext.s_event = function(n_event) {
+		var n_flag=false;
+
+		switch(n?event){
+			case 'key on':
+			{
+				if (mKey_on_flag == true) {
+					n_flag = true;
+					mKey_on_flag =false;
+       			}
+			}
+			break;
+
+			case 'key off':
+			{
+				if (mKey_off_flag == true) {
+					n_flag = true;
+					mKey_off_flag =false;
+       			}
+			}
+			break;
+
+			case 'cc-chg':
+			{
+				if (mCC_change_flag == true) {
+					n_flag = true;
+					mCC_change_flag =false;
+       			}
+			}
+			break;
+
+			case 'p-bend':
+			{
+				if (mPBend_flag == true) {
+					n_flag = true;
+					mPBend_flag =false;
+       			}
+			}
+			break;
+
+			case 'pg-chg':
+			{
+				if (mPBend_flag == true) {
+					n_flag = true;
+					mPBend_flag =false;
+       			}
+			}
+			break;
+		}
+		return n_flag;
+	};
 
 /* -------------------------------------------------------------------------	*/
 	// Block and block menu descriptions
@@ -286,9 +350,15 @@
 			['h', 'PCE', 			's_pcevent'],
 			['r', 'PC', 			's_pchange'],
 			['h', 'PBE', 			's_pbevent'],
-			['r', 'PB', 			's_pbend'],
+			['r', 'PB', 			's_pbend', 64],
+            ['b', 'EVENT %m.midiEvent', 's_event', 'key on'],
 			['-'],
-		]
+		],
+
+		menus: {
+			midiEvent: ['key on', 'key off', 'cc-chg', 'p-bend', 'pg-chg'],
+		},
+
 	};
 
     // Register the extension
