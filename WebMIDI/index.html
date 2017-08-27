@@ -64,6 +64,7 @@ There are six blocks in this extension.
 <li>KEY ON with KEY NUMBER
 <li>PROGRAM CHANGE
 <li>PITCH BEND
+<li>EVENT
 </ul>
 
 <hr width="50%" align="left"><br>
@@ -79,35 +80,51 @@ http://masahirokakishita.github.io/WebMIDI/webmidiext.js
 <b>GET CC</b></br>
 
 "GET CC" is consisted of a hat block  and a synchronous reporter.  The hat block <img src="JPEG/pcchat.jpg"> informs a MIDI CC data comes. And the synchronous reporter <img src="JPEG/pccparam.jpg"> has one parameter. It's a MIDI control change number. The reporter gets the CC value of the CC number defined by the parameter. <br>
-<br>
+<br><br>
 
 <b>GET NOTE ON</b></br>
 "GET NOTE ON" <img src="JPEG/getnote.jpg"> is consisted of a hat block and two synchronous reporters. The hat block informs a MIDI NOTE ON message. NOTE ON message is included two statuses, 0x80 and 0x90. One synchronous reporter indicates the note number and the other indicates the velocity. The case of status 0x80, the velocity is set to zero.
-<br><br>
+<br><br><br>
 
 <b>PUT MIDI</b></br>
 "PUT MIDI" <img src="JPEG/pcmidiout.jpg"> genarates a MIDI NOTE ON message. The first parameter is a channel number, the second one is a note number and last one is a velocity. Normary the velocity is zero means note off.
-<br><br>
+<br><br><br>
 
 <b>KEY ON</b></br>
 "KEY ON" <img src="JPEG/keyon.jpg"> is a hat block that indicates when a keyboad is pushed.
-<br><br>
+<br><br><br>
 
 <b>KEY OFF</b></br>
 "KEY OFF" <img src="JPEG/keyoff.jpg"> is a hat block that indicates when a keyboad is released.
-<br><br>
+<br><br><br>
 
 <b>KEY ON with KEY NUMBER</b></br>
 "KEY ON with KEY NUMBER" <img src="JPEG/keyonnum.jpg"> is a hat block that indicates when a keyboad defined in numeric box is pushed.
-<br><br>
+<br><br><br>
 
 <b>PROGRAM CHANGE</b><br>
-"PCE" is a hat block that indicates when a Program Change message is recieved. And "PC" box indicates a program change number. 
-<br><br>
+"PCE" <img src="JPEG/pce.jpg"> is a hat block that indicates when a Program Change message is recieved.<br> 
+And the reporter block "PC" <img src="JPEG/pcval.jpg"> indicates a program change number. 
+<br><br><br>
 
 <b>PITCH BEND</b><br>
-"PBE" is a hat block that indicates when a Pitch Bend message is recieved. And "PB" box indicates a pitch bend value. 
-<br><br>
+"PBE" <img src="JPEG/pbe.jpg"> is a hat block that indicates when a Pitch Bend message is recieved. <br>
+And the reporter block "PB" <img src="JPEG/pbval.jpg"> indicates a pitch bend value as 7bit. 
+<br><br><br>
+
+<b>EVENT</b><br>
+Boolean reporter "EVENT"<img src="JPEG/event.jpg"> indicates when an MIDI event occurs.<br>
+You can select which an event you want.<br>
+<ul>
+<li>'key on'  --- key on event
+<li>'key off' --- key off event
+<li>'cc-chg'  --- control change event
+<li>'p-bend'  --- pitchbend event
+<li>'pg-chg'  --- program change event
+</ul>
+<img src="JPEG/example3.jpg">
+<br>
+<br>
 
 <hr width="50%" align="left">
 <br>
