@@ -324,9 +324,9 @@
 
 			case 'pg-chg':
 			{
-				if (mPBend_flag == true) {
+				if (mPC_flag == true) {
 					n_flag = true;
-					mPBend_flag =false;
+					mPC_flag =false;
        			}
 			}
 			break;
@@ -350,7 +350,7 @@
 			['h', 'PCE', 			's_pcevent'],
 			['r', 'PC', 			's_pchange'],
 			['h', 'PBE', 			's_pbevent'],
-			['r', 'PB', 			's_pbend', 64],
+			['r', 'PB', 			's_pbend'],
             ['b', 'EVENT %m.midiEvent', 's_event', 'key on'],
 			['-'],
 		],
