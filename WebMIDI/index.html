@@ -1,12 +1,10 @@
-﻿<!DOCTYPE html>
-<HTML>
+<html>
 <HEAD>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="Cache-Control" content="no-cache">
 	<meta http-equiv="Pragma" content="no-cache">
 	<meta http-equiv="Content-Script-Type" content="text/javascript">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<title>Web MIDI Extension</title>
+	<title>MIDI Extension for Scratch</title>
 
   <style type="text/css">
     <!--
@@ -17,163 +15,35 @@
     -->
     </style>
 </HEAD>
+<!--- ==================================================================	-->
+<!--- ==================================================================	-->
+<body bgcolor="#defeef" text="#000000" link="#0000ff" vlink="#ff00ff" 
+alink="#ff0000" style="margin-right:30px;margin-left:30px;margin-top:20px;width: auto;-webkit-text-size-adjust: 100%;">
 
+<div id="sans10" align="left">
+<ul>
+<li><a href="http://bit.ly/2PhmNdz">New Page is here</a>
+<li><a href="http://bit.ly/2NTJ1lh">For Scratch3, Web MIDI API Extension </a>
+<li><a href="http://bit.ly/2xZDbE8">Usage of Web MIDI API Extension </a>
+</ul>
+</div>
+
+<!--
 <body bgcolor="#defeef" text="#000000" link="#0000ff" vlink="#ff00ff" 
 alink="#ff0000" style="margin-right:30px;margin-left:30px;margin-top:20px;">
-<br>
-<!--	-------------------------------------------------------------------- -->
-<div id="sans10" align="right">2019.04.22 add URL of Scratch3 MIDI Extension</div>
-<div id="sans10" align="right">2019.03.31 edit link URL from "http" to "https"</div>
-<div id="sans10" align="right">2017.08.27 add Boolean reporter "EVENT"</div>
-<div id="sans10" align="right">2017.08.26 add "PITCH BEND"and "PROGRAM CHANGE" hats</div>
-<div id="sans10" align="right">2016.09.11 add "KEY ON"and "KEY OFF" hats</div>
-<div id="sans10" align="right">2016.11.15 add "KEY ON with KEY NUMBER" hats</div>
-<div id="sans10" align="left"><a href="http://masahirokakishita.github.io/WebMIDI/index_gamepad.html">Gamepad API Extension</a></div>
-<div id="sans10" align="left"><a href="https://masahirokakishita.github.io/scratch3webmidi/">For Scratch3, Web MIDI API Extension </a></div>
+
+<div id="sans10" align="left"><a href="http://bit.ly/2NTJ1lh">For Scratch3, Web MIDI API Extension </a></div>
+
+<div id="sans10" align="left"><a href="http://bit.ly/2xZDbE8">Usage of Web MIDI API Extension </a></div>
+
 <div id="sans10" align="left"><a href="https://github.com/masahirokakishita/scratch3webmidi">Discription for Extension of Scratch3 </a></div>
-
-<center><h2>Web MIDI API Extension for ScratchX</h2></center>
-<!--	-------------------------------------------------------------------- -->
-<div id="sans14">
-This extension is for using a MIDI device like a MIDI Controller at ScratchX.
-It's made by Web MIDI API.
-This API is one of the HTML5 functions defined by W3C.
-
-<ul>
-	<li>Web MIDI API Working Draft <a href="http://www.w3.org/TR/webmidi/" TARGET="_blank">http://webaudio.github.io/web-midi-api/</a>
-	<li>W3C <a href="http://www.w3.org/" TARGET="_blank">http://www.w3.org/</a>
-</ul>
-
-<font color="red">So this extension is able to use only on Chrome.</font>
-The other browsers are not supporting Web MIDI API now, April 2016.
+<div id="sans10" align="left"><a href="http://masahirokakishita.github.io/WebMIDI/">Web MIDI API Extension for ScratchX</a></div>
+<div id="sans10" align="left"><a href="http://masahirokakishita.github.io/WebMIDI/index_gamepad.html">Gamepad API Extension</a></div>
 <br>
-Do you know MIDI? MIDI is a protocol for connecting between MIDI Devices or a MIDI device to the PC. 
-If you don't know, please see like a following page.
-
-<ul>
-	<li>MIDI wiki <a href="https://en.wikipedia.org/wiki/MIDI" TARGET="_blank">https://en.wikipedia.org/wiki/MIDI</a>
-	<li>SUMMARY OF MIDI MESSAGES <a href="https://www.midi.org/specifications/" TARGET="_blank">https://www.midi.org/specifications</a>
-</ul>
-
-Before you try to use these extensions, you should connect a MIDI device to your PC via USB. 
-After you connect a MIDI device, you launch Chrome browser. 
-Because Chrome browser finds the MIDI device when it launches.
-<br><br>
-There are six blocks in this extension.
-
-<ul>
-<li>GET CC
-<li>GET NOTE ON
-<li>PUT MIDI
-<li>KEY ON
-<li>KEY OFF
-<li>KEY ON with KEY NUMBER
-<li>PROGRAM CHANGE
-<li>PITCH BEND
-<li>EVENT
-</ul>
-
-<hr width="50%" align="left"><br>
-The extension is here.<br>
-
-https%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fwebmidiext.js<br>
-or<br>
-https://masahirokakishita.github.io/WebMIDI/webmidiext.js
-<br><br>
-
-<hr width="50%" align="left">
-<br>
-<b>GET CC</b></br>
-
-"GET CC" is consisted of a hat block  and a synchronous reporter.  The hat block <img src="JPEG/pcchat.jpg"> informs a MIDI CC data comes. And the synchronous reporter <img src="JPEG/pccparam.jpg"> has one parameter. It's a MIDI control change number. The reporter gets the CC value of the CC number defined by the parameter. <br>
-<br><br>
-
-<b>GET NOTE ON</b></br>
-"GET NOTE ON" <img src="JPEG/getnote.jpg"> is consisted of a hat block and two synchronous reporters. The hat block informs a MIDI NOTE ON message. NOTE ON message is included two statuses, 0x80 and 0x90. One synchronous reporter indicates the note number and the other indicates the velocity. The case of status 0x80, the velocity is set to zero.
-<br><br><br>
-
-<b>PUT MIDI</b></br>
-"PUT MIDI" <img src="JPEG/pcmidiout.jpg"> genarates a MIDI NOTE ON message. The first parameter is a channel number, the second one is a note number and last one is a velocity. Normary the velocity is zero means note off.
-<br><br><br>
-
-<b>KEY ON</b></br>
-"KEY ON" <img src="JPEG/keyon.jpg"> is a hat block that indicates when a keyboad is pushed.
-<br><br><br>
-
-<b>KEY OFF</b></br>
-"KEY OFF" <img src="JPEG/keyoff.jpg"> is a hat block that indicates when a keyboad is released.
-<br><br><br>
-
-<b>KEY ON with KEY NUMBER</b></br>
-"KEY ON with KEY NUMBER" <img src="JPEG/keyonnum.jpg"> is a hat block that indicates when a keyboad defined in numeric box is pushed.
-<br><br><br>
-
-<b>PROGRAM CHANGE</b><br>
-"PCE" <img src="JPEG/pce.jpg"> is a hat block that indicates when a Program Change message is recieved.<br> 
-And the reporter block "PC" <img src="JPEG/pcval.jpg"> indicates a program change number. 
-<br><br><br>
-
-<b>PITCH BEND</b><br>
-"PBE" <img src="JPEG/pbe.jpg"> is a hat block that indicates when a Pitch Bend message is recieved. <br>
-And the reporter block "PB" <img src="JPEG/pbval.jpg"> indicates a pitch bend value as 7bit. 
-<br><br><br>
-
-<b>EVENT</b><br>
-Boolean reporter "EVENT"<img src="JPEG/event.jpg"> indicates when an MIDI event occurs.<br>
-You can select which an event you want.<br>
-<ul>
-<li>'key on'  --- key on event
-<li>'key off' --- key off event
-<li>'cc-chg'  --- control change event
-<li>'p-bend'  --- pitchbend event
-<li>'pg-chg'  --- program change event
-</ul>
-<img src="JPEG/example3.jpg">
-<br>
-<br>
-
-<hr width="50%" align="left">
-<br>
-<a href="https://scratchx.org/?url=https%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fproject.sbx" TARGET="_blank">This is an example using this extension.</a>
-<br><br>
-<iframe width="420" height="315" src="https://www.youtube.com/embed/iWIwDGgzD1Y" frameborder="0" allowfullscreen></iframe>
-<br><br>
-In this movie's case, when a key on the keyboard is hit a small rocket moves to a position defined by key number and velocity.
-<br><br>
-
-<!-- ---------------------------------------------------------------------	-->
-<hr width="50%" align="left">
-<br>
-<b>Example 1</b></br>
-This example is for separationg Note Off from Note On. Note Off can be found by the velocity is zero.<br>
-<img src="JPEG/example1.jpg"><br>
-<a href="https://scratchx.org/?url=https%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fnodeonoff.sbx" TARGET="_blank">The Example is here.</a><br>
-<br><br>
-
-<!-- ---------------------------------------------------------------------	-->
-<hr width="50%" align="left">
-<br>
-<b>Example 2</b></br>
-This Example is using "KEY ON" and "KEY OFF" hats.<br>
-<br>
-<img src="JPEG/example2.jpg"><br>
-<br>
-<a href="https://scratchx.org/?url=https%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fkeyonoffhat.sbx" TARGET="_blank">The Example is here.</a><br>
-<br><br>
-
-<!-- ---------------------------------------------------------------------	-->
-<hr width="50%" align="left">
-<br>
-<b>Example 4</b></br>
-<br>
-<img src="JPEG/example4.jpg"><br>
-<br>
-<a href="https://scratchx.org/?url=https%3A%2F%2Fmasahirokakishita.github.io%2FWebMIDI%2Fproject.sbx" TARGET="_blank">The Example is here.</a><br>
-<br><br>
+-->
 
 </body>
-
-<!--- -----------------------------------------------------------------------------	-->
+<!--- ==================================================================	-->
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
