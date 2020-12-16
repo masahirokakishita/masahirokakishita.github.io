@@ -1,5 +1,4 @@
-# MIDI and Game Pad Extension for Scratch3
+test
 
-[Please use new Page](http://bit.ly/2JxiENG)
 
 
